@@ -7,11 +7,12 @@
 #define _MMAX
 #define _MJ2
 
+// VARIABLES
 // Debugging prefix for easy grep search
-const char prefix[] = "PABLO";
+const char pablo_prefix[] = "PABLO";
 
 // Global variable to keep track of the number of quantizations completed
-int nq = 0;
+int pablo_nq = 0;
 
 // Time measurements for quantization functions
 typedef struct _quant_times {   
@@ -21,6 +22,7 @@ typedef struct _quant_times {
     double j2_iter_time;        // Time it takes to complete 1 iteration of the j2 loop
 } quant_times;
 
+// FUNCTIONS
 /**
  * Print the whole structure quant_times along with the id of the reading under the same prefix
  * @param qt: the structure to print
