@@ -121,6 +121,7 @@ int main(int argc, char ** argv) {
     gpt_params params;
     g_params = &params;
 
+    // PABLO: comprueba que todos los argumentos tienen sus respectivos parametros
     if (!gpt_params_parse(argc, argv, params)) {
         return 1;
     }
