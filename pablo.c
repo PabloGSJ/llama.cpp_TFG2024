@@ -1,7 +1,7 @@
 #include "pablo.h"
 #include <stdio.h>
 
-print_quant_times(quant_times qt) {
+void print_quant_times(quant_times qt) {
 
     printf("%s - %dth iter:\n", prefix, nq);
     printf("%s - Total exec time:\t%f\n", prefix, qt.total_time);
