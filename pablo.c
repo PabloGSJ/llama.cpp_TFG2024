@@ -1,31 +1,39 @@
 #include "pablo.h"
 #include <stdio.h>
 
+// Initialize pablo.h variables
 int pablo_tid = 0;
 int pablo_rid = 0;
 int pablo_histogram[PABLO_N_TENSORS][PABLO_TENSOR_SIDE][PABLO_MAX_HIST_VALUE] = {0};
 
-
+// Define pablo.h functions
 void pablo_print_row() {
-    printf("%s - Tensor: %d, Row: %d\n", PABLO_ROW_PREFIX, pablo_tid, pablo_rid);
+    #ifdef _PABLO_PRINT_ROW
 
-    for (int i = 0; i < PABLO_MAX_HIST_VALUE; i++) {
-    
-        printf("%s - %d: %d\n", PABLO_ROW_PREFIX, i, pablo_histogram[pablo_tid][pablo_rid][i]);
-    }
-    printf("%s\n", PABLO_ROW_PREFIX);
+        printf("%s - Tensor: %d, Row: %d\n", PABLO_ROW_PREFIX, pablo_tid, pablo_rid);   // header
+        
+        for (int i = 0; i < PABLO_MAX_HIST_VALUE; i++) 
+            printf("%s - %d: %d\n", PABLO_ROW_PREFIX, i, pablo_histogram[pablo_tid][pablo_rid][i]);
+
+        printf("%s\n", PABLO_ROW_PREFIX);
+
+    #endif /* _PABLO_PRINT_ROW */
 }
 
 void pablo_print_tensor() {
-    printf("%s - Tensor: %d\n", PABLO_ROW_PREFIX, pablo_tid);
+    #ifdef _PABLO_PRINT_TENSOR
 
-    for (int i = 0; i < PABLO_MAX_HIST_VALUE; i++) {        
-        int sum = 0;
+        printf("%s - Tensor: %d\n", PABLO_ROW_PREFIX, pablo_tid);   // header
 
-        for (int j = 0; j < PABLO_TENSOR_SIDE; j++)
-            sum += pablo_histogram[pablo_tid][j][i];
-    
-        printf("%s - %d: %d\n", PABLO_ROW_PREFIX, i, sum);
-    }
-    printf("%s\n", PABLO_ROW_PREFIX);
+        for (int i = 0; i < PABLO_MAX_HIST_VALUE; i++) {        
+            int sum = 0;
+
+            for (int j = 0; j < PABLO_TENSOR_SIDE; j++)
+                sum += pablo_histogram[pablo_tid][j][i];
+        
+            printf("%s - %d: %d\n", PABLO_ROW_PREFIX, i, sum);
+        }
+        printf("%s\n", PABLO_ROW_PREFIX);
+
+    #endif /* _PABLO_PRINT_TENSOR */
 }

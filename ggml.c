@@ -19788,9 +19788,14 @@ size_t ggml_quantize_q4_0(const float * src, void * dst, int n, int k, int64_t *
 
     for (int b = 0; b < n; b += k) {
         block_q4_0 * restrict y = (block_q4_0 *) dst + b/QK4_0;
-        pablo_rid = b;  // PABLO
+
+        // PABLO: get the current row id
+        pablo_rid = b;
 
         quantize_row_q4_0_reference(src + b, y, k);
+
+        // PABLO: print the current row histogram
+        pablo_print_row();
 
         for (int i = 0; i < nb; i++) {
             for (int j = 0; j < QK4_0; j += 2) {

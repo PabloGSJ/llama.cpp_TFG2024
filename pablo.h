@@ -5,6 +5,10 @@
 
 #include <time.h>
 
+// DEBUG
+//#define _PABLO_PRINT_ROW
+#define _PABLO_PRINT_TENSOR
+
 #define PABLO_PREFIX    "PABLO"
 #define PABLO_ROW_PREFIX        "PABLO_unistd-row"
 #define PABLO_TENSOR_PREFIX     "PABLO_unistd-tensor"
