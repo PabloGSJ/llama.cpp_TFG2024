@@ -6,6 +6,8 @@
 #include <time.h>
 
 #define PABLO_PREFIX    "PABLO"
+#define PABLO_ROW_PREFIX        "PABLO_unistd-row"
+#define PABLO_TENSOR_PREFIX     "PABLO_unistd-tensor"
 
 #define PABLO_N_TENSORS         291
 #define PABLO_TENSOR_SIDE       4096
@@ -20,5 +22,9 @@ extern int pablo_histogram[PABLO_N_TENSORS][PABLO_TENSOR_SIDE][PABLO_MAX_HIST_VA
 
 // Pablo lib init function
 void pablo_init();
+
+// Print the information about the different histograms
+void pablo_print_row();
+void pablo_print_tensor();
 
 #endif /* PABLO_H */
