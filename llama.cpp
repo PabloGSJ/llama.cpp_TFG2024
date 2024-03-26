@@ -11490,6 +11490,12 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
     // placeholder for the meta data
     ::zeros(fout, meta_size);
 
+    // PABLO: init histogram
+    for (int pablo_i = 0; pablo_i < PABLO_N_TENSORS; pablo_i++)
+        for (int pablo_j = 0; pablo_j < PABLO_TENSOR_SIDE; pablo_j++)
+            for (int pablo_y = 0; pablo_y < PABLO_MAX_HIST_VALUE; pablo_y++)
+                pablo_histogram[pablo_i][pablo_j][pablo_y] = 0;
+
     for (int i = 0; i < ml.n_tensors; ++i) {
         struct ggml_tensor * tensor = ml.get_tensor_meta(i);
 
