@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _PABLO
+#define _PABLO
 
 #include <time.h>
 
@@ -16,3 +17,5 @@
 int pablo_histogram[PABLO_N_TENSORS][PABLO_TENSOR_SIDE][16] = {0};  // histogram with maximum granularity
 int pablo_tid = 0;                                                  // active tensor id
 int pablo_rid = 0;                                                  // active row id
+
+#endif /*_PABLO*/
