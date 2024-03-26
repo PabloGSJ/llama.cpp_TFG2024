@@ -1,5 +1,6 @@
-#ifndef _PABLO
-#define _PABLO
+#pragma once
+#ifndef _PABLO_H
+#define _PABLO_H
 
 #include <time.h>
 
@@ -18,4 +19,4 @@ int pablo_histogram[PABLO_N_TENSORS][PABLO_TENSOR_SIDE][16] = {0};  // histogram
 int pablo_tid = 0;                                                  // active tensor id
 int pablo_rid = 0;                                                  // active row id
 
-#endif /*_PABLO*/
+#endif /*_PABLO_H*/
