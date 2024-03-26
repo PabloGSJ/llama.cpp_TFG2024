@@ -12,9 +12,9 @@
 #define N_TENSORS_7B    291         // Total number of tensors for the 7B model
 
 // VARIABLES
-int p_histogram[292][4096][16] = {0};   // histogram with maximum granularity
-int p_tid = 0;                          // active tensor id
-int p_rid = 0;                          // active row id
+int pablo_histogram[292][4096][16] = {0};   // histogram with maximum granularity
+int pablo_tid = 0;                          // active tensor id
+int pablo_rid = 0;                          // active row id
 
 // Important measurements to print
 typedef struct _pablo_measurements {

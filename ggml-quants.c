@@ -577,8 +577,8 @@ void quantize_row_q4_0_reference(const float * restrict x, block_q4_0 * restrict
             y[i].qs[j]  = xi0;
             y[i].qs[j] |= xi1 << 4;
 
-            p_histogram[p_tid][p_rid][xi0]++;
-            p_histogram[p_tid][p_rid][xi1]++;
+            pablo_histogram[pablo_tid][pablo_rid][xi0]++;
+            pablo_histogram[pablo_tid][pablo_rid][xi1]++;
         }
     }
 }
