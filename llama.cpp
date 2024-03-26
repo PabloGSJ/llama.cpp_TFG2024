@@ -1,5 +1,6 @@
 #define LLAMA_API_INTERNAL
 #include "llama.h"
+#include "pablo.h"
 
 #include "unicode.h"
 
@@ -11502,6 +11503,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         }
         ml.load_data_for(tensor);
 
+        pablo_id = idx;     // PABLO
         LLAMA_LOG_INFO("[%4d/%4d] %36s - [%s], type = %6s, ",
                ++idx, ml.n_tensors,
                ggml_get_name(tensor),
@@ -11593,6 +11595,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
             std::array<int64_t, 1 << 4> hist_cur = {};
 
             const int n_per_row = tensor->ne[0];
+            pm[pablo_id].block_size = n_per_row;      // PABLO
             const int nrows = nelements / n_per_row;
 
             static const int min_chunk_size = 32 * 512;

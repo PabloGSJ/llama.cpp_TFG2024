@@ -538,19 +538,7 @@ static const uint64_t table_b2b_1[1 << 8] = { B8(10, 00) }; // (!b) << 4
 
 // reference implementation for deterministic creation of model files
 void quantize_row_q4_0_reference(const float * restrict x, block_q4_0 * restrict y, int k) {
-    
-    // PABLO:
-    // Clock counters
-    clock_t c_total = 0;
-    clock_t c_block = 0;
-    clock_t c_max = 0;
-    clock_t c_j2 = 0;
 
-    #ifdef _MTOTAL 
-        c_total -= clock(); // ini
-    #endif /*_MTOTAL*/
-    
-    // inicio normal de la funcion
     static const int qk = QK4_0;    // constante de cuantizacion para enteros de 4 bits
 
     assert(k % qk == 0);            // Comprueba que el numero de elementos de x es divisible entre qk para la siguiente operacion
@@ -559,30 +547,17 @@ void quantize_row_q4_0_reference(const float * restrict x, block_q4_0 * restrict
 
     // BUCLE i:
     for (int i = 0; i < nb; i++) {  
-        
-        #ifdef _MBLOCK
-            c_block -= clock(); // ini
-        #endif /*_MBLOCK*/
-
         float amax = 0.0f; // absolute max
         float max  = 0.0f;
 
         // BUCLE j 1:
-        for (int j = 0; j < qk; j++) {      // Busca el máximo de la fila (alfa?)
-            
-            #ifdef _MMAX
-                c_max -= clock(); // ini
-            #endif /*_MMAX*/
+        for (int j = 0; j < qk; j++) {
 
             const float v = x[i*qk + j];
             if (amax < fabsf(v)) {
                 amax = fabsf(v);
                 max  = v;
             }
-
-            #ifdef _MMAX
-                c_max += clock(); // fin
-            #endif /*_MMAX*/
         }
 
         const float d  = max / -8;
@@ -592,9 +567,6 @@ void quantize_row_q4_0_reference(const float * restrict x, block_q4_0 * restrict
 
         // BUCLE j 2:
         for (int j = 0; j < qk/2; ++j) {
-            #ifdef _MJ2
-                c_j2 -= clock(); // ini
-            #endif /*_MJ2*/
 
             const float x0 = x[i*qk + 0    + j]*id;
             const float x1 = x[i*qk + qk/2 + j]*id;
@@ -605,46 +577,10 @@ void quantize_row_q4_0_reference(const float * restrict x, block_q4_0 * restrict
             y[i].qs[j]  = xi0;
             y[i].qs[j] |= xi1 << 4;
 
-            #ifdef _MJ2
-                c_j2 += clock(); // fin
-            #endif /*_MJ2*/
+            p_histogram[p_tid][p_rid][xi0]++;
+            p_histogram[p_tid][p_rid][xi1]++;
         }
-
-        #ifdef _MBLOCK
-            c_block += clock(); // fin
-        #endif /*_MBLOCK*/
-
     }
-
-    // final normal de la funcion
-
-    #ifdef _MTOTAL
-        c_total += clock(); // fin
-    #endif /*_MTOTAL*/
-
-
-    // CALCULAR TIEMPOS -----------------------------------------------------------------------
-    quant_times qt;
-
-    // TIEMPO total
-    qt.total_time = (double)c_total;
-    qt.total_time /= CLOCKS_PER_SEC;
-
-    // TIEMPO por bloque
-    qt.per_block_time = (double)c_block / nb;
-    qt.per_block_time /= CLOCKS_PER_SEC;
-
-    // TIEMPO para encontrar un maximo
-    qt.max_search_time = (double)c_max / (qk * nb);
-    qt.max_search_time /= CLOCKS_PER_SEC;
-
-    // TIEMPO para J2
-    qt.j2_iter_time = (double)c_j2 / ((qk / 2) * nb);
-    qt.j2_iter_time /= CLOCKS_PER_SEC;
-
-    print_quant_times(qt);
-    // ---------------------------------------------------------------------------------------
-    
 }
 
 void quantize_row_q4_0(const float * restrict x, void * restrict y, int k) {

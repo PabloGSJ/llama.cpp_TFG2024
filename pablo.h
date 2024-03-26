@@ -2,17 +2,30 @@
 
 #include <time.h>
 
+// DEBUG
 #define _MTOTAL
 #define _MBLOCK
 #define _MMAX
 #define _MJ2
 
-// VARIABLES
-// Debugging prefix for easy grep search
-const char pablo_prefix[] = "PABLO";
+#define PABLO_PREFIX    "PABLO"
+#define N_TENSORS_7B    291         // Total number of tensors for the 7B model
 
-// Global variable to keep track of the number of quantizations completed
-int pablo_nq = 0;
+// VARIABLES
+int p_histogram[292][4096][16] = {0};   // histogram with maximum granularity
+int p_tid = 0;                          // active tensor id
+int p_rid = 0;                          // active row id
+
+// Important measurements to print
+typedef struct _pablo_measurements {
+    int block_size;                 // size of the tensor subblock
+    int block_ammount;              // number of blocks quantized
+} pablo_measurements;
+
+pablo_measurements pm[N_TENSORS_7B];
+
+// id of the analized tensor
+int pablo_id = 0;
 
 // Time measurements for quantization functions
 typedef struct _quant_times {   
