@@ -617,8 +617,8 @@ $(info )
 # Build library
 #
 # PABLO:
-# pablo.o: pablo.c pablo.h
-#	$(CC)  $(CFLAGS)   -c $< -o $@
+ pablo.o: pablo.c pablo.h
+	$(CC)  $(CFLAGS)   -c $< -o $@
 
 ggml.o: ggml.c ggml.h ggml-cuda.h pablo.h
 	$(CC)  $(CFLAGS)   -c $< -o $@
@@ -629,12 +629,12 @@ ggml-alloc.o: ggml-alloc.c ggml.h ggml-alloc.h
 ggml-backend.o: ggml-backend.c ggml.h ggml-backend.h
 	$(CC)  $(CFLAGS)   -c $< -o $@
 
-ggml-quants.o: ggml-quants.c ggml.h ggml-quants.h pablo.h
+ggml-quants.o: ggml-quants.c ggml.h ggml-quants.h
 	$(CC) $(CFLAGS)    -c $< -o $@
 
-OBJS += ggml-alloc.o ggml-backend.o ggml-quants.o
+OBJS += ggml-alloc.o ggml-backend.o ggml-quants.o pablo.o
 
-llama.o: llama.cpp ggml.h ggml-alloc.h ggml-backend.h ggml-cuda.h ggml-metal.h llama.h pablo.h
+llama.o: llama.cpp ggml.h ggml-alloc.h ggml-backend.h ggml-cuda.h ggml-metal.h llama.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 COMMON_H_DEPS = common/common.h common/sampling.h common/log.h
