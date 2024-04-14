@@ -19782,6 +19782,11 @@ void ggml_quantize_free(void) {
     ggml_critical_section_end();
 }
 
+// PABLO:
+void pablo_print_all_ggml() {
+    pablo_print_all();
+}
+
 size_t ggml_quantize_q4_0(const float * src, void * dst, int n, int k, int64_t * hist) {
     assert(k % QK4_0 == 0);
     const int nb = k / QK4_0;

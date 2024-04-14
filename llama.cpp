@@ -2,7 +2,6 @@
 #include "llama.h"
 #include "pablo.h"
 
-
 #include "unicode.h"
 
 #include "ggml.h"
@@ -11637,7 +11636,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
     }
 
     // PABLO:
-    pablo_print_all();
+    pablo_print_all_ggml();
 
     // go back to beginning of file and write the updated meta data
     {

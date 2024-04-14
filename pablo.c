@@ -7,6 +7,17 @@ int pablo_rid = 0;
 int pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
 
 // Define pablo.h functions
+void pablo_print_all(void) {
+    #ifdef _PABLO_PRINT_ALL
+
+        for (int t = 0; t < PABLO_NUM_TENSORS; t++) 
+            for (int r = 0; r < PABLO_NUM_ROWS; r++) 
+                for (int h = 0; h < PABLO_NUM_HIST; h++) 
+                    printf("%s - Tensor %20d - Row %20d - Hist %20d : %20d\n", t, r, h, pablo_histogram[t][r][h]);
+
+    #endif /* _PABLO_PRINT_ALL */
+}
+
 void pablo_print_row() {
     #ifdef _PABLO_PRINT_ROW
 
