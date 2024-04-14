@@ -13,7 +13,7 @@ void pablo_print_all(void) {
         for (int t = 0; t < PABLO_NUM_TENSORS; t++) 
             for (int r = 0; r < PABLO_NUM_ROWS; r++) 
                 for (int h = 0; h < PABLO_NUM_HIST; h++) 
-                    printf("%s - Tensor %20d - Row %20d - Hist %20d : %20d\n", t, r, h, pablo_histogram[t][r][h]);
+                    printf("%s - Tensor %20d - Row %20d - Hist %20d : %20d\n", PABLO_PREFIX, t, r, h, pablo_histogram[t][r][h]);
 
     #endif /* _PABLO_PRINT_ALL */
 }
