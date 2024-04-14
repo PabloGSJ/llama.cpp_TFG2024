@@ -11635,6 +11635,9 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         zeros(fout, GGML_PAD(new_size, align) - new_size);
     }
 
+    // PABLO:
+    pablo_print_all();
+
     // go back to beginning of file and write the updated meta data
     {
         fout.seekp(0);

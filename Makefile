@@ -632,7 +632,7 @@ ggml-backend.o: ggml-backend.c ggml.h ggml-backend.h
 ggml-quants.o: ggml-quants.c ggml.h ggml-quants.h pablo.h
 	$(CC) $(CFLAGS)    -c $< -o $@
 
-OBJS += ggml-alloc.o ggml-backend.o ggml-quants.o pablo.o
+OBJS += ggml-alloc.o ggml-backend.o ggml-quants.o
 
 llama.o: llama.cpp ggml.h ggml-alloc.h ggml-backend.h ggml-cuda.h ggml-metal.h llama.h pablo.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -655,11 +655,11 @@ grammar-parser.o: common/grammar-parser.cpp common/grammar-parser.h
 train.o: common/train.cpp common/train.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-libllama.so: llama.o ggml.o $(OBJS)
+libllama.so: llama.o ggml.o $(OBJS) pablo.o
 	$(CXX) $(CXXFLAGS) -shared -fPIC -o $@ $^ $(LDFLAGS)
 
-libllama.a: llama.o ggml.o $(OBJS) $(COMMON_DEPS)
-	ar rcs libllama.a llama.o ggml.o $(OBJS) $(COMMON_DEPS)
+libllama.a: llama.o ggml.o $(OBJS) $(COMMON_DEPS) pablo.o
+	ar rcs libllama.a llama.o ggml.o $(OBJS) $(COMMON_DEPS) pablo.o
 
 clean:
 	rm -vrf *.o tests/*.o *.so *.a *.dll benchmark-matmult common/build-info.cpp *.dot $(COV_TARGETS) $(BUILD_TARGETS) $(TEST_TARGETS)
@@ -676,18 +676,18 @@ clean:
 # Helper function that replaces .c, .cpp, and .cu file endings with .o:
 GET_OBJ_FILE = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cu,%.o,$(1))))
 
-main: examples/main/main.cpp                                  ggml.o llama.o $(COMMON_DEPS) console.o grammar-parser.o $(OBJS)
+main: examples/main/main.cpp                                  ggml.o llama.o $(COMMON_DEPS) console.o grammar-parser.o $(OBJS) pablo.o
 	$(CXX) $(CXXFLAGS) -c $< -o $(call GET_OBJ_FILE, $<)
 	$(CXX) $(CXXFLAGS) $(filter-out %.h $<,$^) $(call GET_OBJ_FILE, $<) -o $@ $(LDFLAGS)
 	@echo
 	@echo '====  Run ./main -h for help.  ===='
 	@echo
 
-infill: examples/infill/infill.cpp                            ggml.o llama.o $(COMMON_DEPS) console.o grammar-parser.o $(OBJS)
+infill: examples/infill/infill.cpp                            ggml.o llama.o $(COMMON_DEPS) console.o grammar-parser.o $(OBJS) pablo.o
 	$(CXX) $(CXXFLAGS) -c $< -o $(call GET_OBJ_FILE, $<)
 	$(CXX) $(CXXFLAGS) $(filter-out %.h $<,$^) $(call GET_OBJ_FILE, $<) -o $@ $(LDFLAGS)
 
-simple: examples/simple/simple.cpp                            ggml.o llama.o $(COMMON_DEPS) $(OBJS)
+simple: examples/simple/simple.cpp                            ggml.o llama.o $(COMMON_DEPS) $(OBJS) pablo.o
 	$(CXX) $(CXXFLAGS) -c $< -o $(call GET_OBJ_FILE, $<)
 	$(CXX) $(CXXFLAGS) $(filter-out %.h $<,$^) $(call GET_OBJ_FILE, $<) -o $@ $(LDFLAGS)
 

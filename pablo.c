@@ -4,10 +4,10 @@
 // Initialize pablo.h variables
 int pablo_tid = 0;
 int pablo_rid = 0;
-int pablo_histogram[PABLO_N_TENSORS][PABLO_TENSOR_SIDE][PABLO_MAX_HIST_VALUE] = {0};
+int pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
 
 // Define pablo.h functions
-void pablo_print_row() {
+void pablo_print_row(int rid) {
     #ifdef _PABLO_PRINT_ROW
 
         printf("%s - Tensor: %d, Row: %d\n", PABLO_ROW_PREFIX, pablo_tid, pablo_rid);   // header
