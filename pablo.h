@@ -23,11 +23,8 @@ extern int pablo_rid;   // active row id
 // histogram with maximum granularity
 extern int pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST];
 
-// Pablo lib init function
-void pablo_init();
-
 // Print the information about the different histograms
-void pablo_print_row(int rid);
+void pablo_print_row(void);
 void pablo_print_tensor(void);
 void pablo_print_all(void);
 
