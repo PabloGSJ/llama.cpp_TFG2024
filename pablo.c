@@ -7,14 +7,25 @@ int pablo_rid = 0;
 int pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
 
 // Define pablo.h functions
-void pablo_print_all(void) {
+void pablo_print_all(void) {    // formato json
     #ifdef _PABLO_PRINT_ALL
 
-        for (int t = 0; t < PABLO_NUM_TENSORS; t++) 
-            for (int r = 0; r < PABLO_NUM_ROWS; r++) 
-                for (int h = 0; h < PABLO_NUM_HIST; h++) 
-                    printf("%s - Tensor %20d - Row %20d - Hist %20d : %20d\n", PABLO_PREFIX, t, r, h, pablo_histogram[t][r][h]);
+        printf("{\"tensors\":[");
 
+        for (int t = 0; t < PABLO_NUM_TENSORS; t++) {
+            printf("{\"tensor\":[");
+
+            for (int r = 0; r < PABLO_NUM_ROWS; r++)  {
+                printf("{\"row\":[");
+
+                for (int h = 0; h < PABLO_NUM_HIST; h++) {
+                    printf("%d, ", pablo_histogram[t][r][h]);
+                }
+                printf("]}");
+            }
+            printf("]}");
+        }
+        printf("]}\n");
     #endif /* _PABLO_PRINT_ALL */
 }
 
