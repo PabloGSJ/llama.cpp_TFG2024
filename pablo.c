@@ -21,11 +21,11 @@ void pablo_print_all(void) {    // formato json
                 for (int h = 0; h < PABLO_NUM_HIST; h++) {
                     printf("%d, ", pablo_histogram[t][r][h]);
                 }
-                printf("]}");
+                printf("\b\b]}, ");
             }
-            printf("]}");
+            printf("\b\b]}, ");
         }
-        printf("]}\n");
+        printf("\b\b]}\n");
     #endif /* _PABLO_PRINT_ALL */
 }
 
