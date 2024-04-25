@@ -4,12 +4,15 @@
 // Initialize pablo.h variables
 int pablo_tid = 0;
 int pablo_rid = 0;
+int pablo_occurrences = 0;
 int pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
+int pablo_grouping_hist[PABLO_MAX_GROUPING] = {0};
 
 // Define pablo.h functions
 void pablo_print_all(void) {    // formato json
     #ifdef _PABLO_PRINT_ALL
 
+        // print tensor histogram
         printf("{\"tensors\":[");
 
         for (int t = 0; t < PABLO_NUM_TENSORS; t++) {
@@ -24,6 +27,15 @@ void pablo_print_all(void) {    // formato json
                 printf("\b\b]}, ");
             }
             printf("\b\b]}, ");
+        }
+        printf("\b\b]}\n\n");
+
+        // print grouping histogram
+        printf("{\"grouping\":[");
+
+        for (int h = 0; h < PABLO_MAX_GROUPING; h++) {
+            printf("%d, ", pablo_histogram[h]);
+
         }
         printf("\b\b]}\n");
     #endif /* _PABLO_PRINT_ALL  */

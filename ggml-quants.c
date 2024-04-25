@@ -538,7 +538,7 @@ static const uint64_t table_b2b_1[1 << 8] = { B8(10, 00) }; // (!b) << 4
 
 // PABLO: quantize 8 -> 0
 void quantize_row_pablo_reference(const float * restrict x, block_q4_0 * restrict y, int k) {
-/*
+
     static const int qk = QK4_0;
 
     assert(k % qk == 0);
@@ -566,22 +566,30 @@ void quantize_row_pablo_reference(const float * restrict x, block_q4_0 * restric
         y[i].d = GGML_FP32_TO_FP16(d);
 
         // j 2 loop:
-        for (int j = 0; j < qk/2; ++j) {
+        for (int j = 0; j < qk; j++) {
 
-            const float x0 = x[i*qk + 0    + j]*id;
-            const float x1 = x[i*qk + qk/2 + j]*id;
+            const float x0 = x[i*qk + 0 + j]*id;
 
             const uint8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8.0f;
-            const uint8_t xi1 = MIN(15, (int8_t)(x1 + 8.5f)) - 8.0f;
 
             y[i].qs[j]  = xi0;
-            y[i].qs[j] |= xi1 << 4;
 
             pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;   // apply offset to save into the real values
-            pablo_histogram[pablo_tid][pablo_rid][xi1 + 8]++;
+
+            if (xi0 == PABLO_SEEKED_INT) {
+                // keep adding occurences
+                pablo_occurrences++;
+
+            } else if (pablo_occurrences > 0) {
+                // save number of occurrences observed
+                if (pablo_occurrences > 16) 
+                    pablo_occurrences = 16;
+                pablo_grouping_hist[pablo_occurrences - 1]++;
+
+                pablo_occurrences = 0;
+            }
         }
-    }*/
-    printf("Pablo still works!\n");
+    }
 }
 
 void quantize_row_pablo(const float * restrict x, void * restrict y, int k) {
