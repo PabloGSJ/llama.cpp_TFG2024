@@ -581,11 +581,12 @@ void quantize_row_pablo_reference(const float * restrict x, block_q4_0 * restric
             pablo_histogram[pablo_tid][pablo_rid][xi1 + 8]++;
         }
     }*/
-    printf("PABLO works! ^^\n");
+    printf("Pablo still works!\n");
 }
 
 void quantize_row_pablo(const float * restrict x, void * restrict y, int k) {
     quantize_row_pablo_reference(x, y, k);
+    //quantize_row_pablo_imprecise_reference(x, y, k);
 }
 
 // PABLO: quantize {7, 8, 9} -> 0 (less precission)
@@ -637,10 +638,6 @@ void quantize_row_pablo_imprecise_reference(const float * restrict x, block_q4_0
             pablo_histogram[pablo_tid][pablo_rid][xi1 + 8]++;
         }
     }
-}
-
-void quantize_row_pablo_imprecise(const float * restrict x, void * restrict y, int k) {
-    quantize_row_pablo_imprecise_reference(x, y, k);
 }
 
 // reference implementation for deterministic creation of model files

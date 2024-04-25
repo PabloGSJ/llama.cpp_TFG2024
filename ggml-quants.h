@@ -252,7 +252,6 @@ extern "C" {
 void quantize_row_pablo_reference(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
 void quantize_row_pablo(const float * GGML_RESTRICT x, void * GGML_RESTRICT y, int k);
 void quantize_row_pablo_imprecise_reference(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
-void quantize_row_pablo_imprecise(const float * GGML_RESTRICT x, void * GGML_RESTRICT y, int k);
 
 void quantize_row_q4_0_reference(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
 void quantize_row_q4_1_reference(const float * GGML_RESTRICT x, block_q4_1 * GGML_RESTRICT y, int k);

@@ -524,22 +524,6 @@ static const ggml_type_traits_t type_traits[GGML_TYPE_COUNT] = {
         .nrows                    = 1,
 #endif
     },
-    [GGML_TYPE_PABLO_IMPRECISE] = {
-        .type_name                = "pablo_imprecise",
-        .blck_size                = QK4_0,
-        .type_size                = sizeof(block_q4_0),
-        .is_quantized             = true,
-        .to_float                 = (ggml_to_float_t) dequantize_row_q4_0,  // PABLO: cambiar
-        .from_float               = quantize_row_pablo_imprecise,
-        .from_float_reference     = (ggml_from_float_t) quantize_row_pablo_imprecise_reference,
-        .vec_dot                  = ggml_vec_dot_q4_0_q8_0,
-        .vec_dot_type             = GGML_TYPE_Q8_0,
-#if defined (__ARM_FEATURE_MATMUL_INT8)
-        .nrows                    = 2,
-#else
-        .nrows                    = 1,
-#endif
-    },
     [GGML_TYPE_Q4_1] = {
         .type_name                = "q4_1",
         .blck_size                = QK4_1,

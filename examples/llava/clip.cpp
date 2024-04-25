@@ -1922,7 +1922,7 @@ bool clip_model_quantize(const char * fname_inp, const char * fname_out, const i
             switch (new_type) {
                 case GGML_TYPE_PABLO: {
                     new_size = ggml_quantize_pablo(f32_data, new_data, n_elms, cur->ne[0], hist_cur.data());
-                }
+                } break;
                 case GGML_TYPE_Q4_0: {
                     new_size = ggml_quantize_q4_0(f32_data, new_data, n_elms, cur->ne[0], hist_cur.data());
                 } break;

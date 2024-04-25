@@ -364,7 +364,6 @@ extern "C" {
         GGML_TYPE_IQ2_S   = 22,
         GGML_TYPE_IQ4_XS  = 23,
         GGML_TYPE_PABLO = 24,
-        GGML_TYPE_PABLO_IMPRECISE = 25,
         GGML_TYPE_I8,
         GGML_TYPE_I16,
         GGML_TYPE_I32,
