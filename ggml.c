@@ -12285,6 +12285,7 @@ static void ggml_compute_forward_alibi(
             {
                 ggml_compute_forward_alibi_f32(params, dst);
             } break;
+        case GGML_TYPE_PABLO:
         case GGML_TYPE_Q4_0:
         case GGML_TYPE_Q4_1:
         case GGML_TYPE_Q5_0:
@@ -12371,6 +12372,7 @@ static void ggml_compute_forward_clamp(
                 ggml_compute_forward_clamp_f32(params, dst);
             } break;
         case GGML_TYPE_F16:
+        case GGML_TYPE_PABLO:
         case GGML_TYPE_Q4_0:
         case GGML_TYPE_Q4_1:
         case GGML_TYPE_Q5_0:
