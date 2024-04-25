@@ -38,6 +38,7 @@ void pablo_print_all(void) {    // formato json
 
         }
         printf("\b\b]}\n");
+        
     #endif /* _PABLO_PRINT_ALL  */
 }
 
