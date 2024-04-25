@@ -363,10 +363,12 @@ extern "C" {
         GGML_TYPE_IQ3_S   = 21,
         GGML_TYPE_IQ2_S   = 22,
         GGML_TYPE_IQ4_XS  = 23,
+        GGML_TYPE_PABLO = 24,
+        GGML_TYPE_PABLO_IMPRECISE = 25,
         GGML_TYPE_I8,
         GGML_TYPE_I16,
         GGML_TYPE_I32,
-        GGML_TYPE_COUNT,
+        GGML_TYPE_COUNT
     };
 
     // precision
@@ -2179,6 +2181,9 @@ extern "C" {
     void pablo_print_all_ggml();
 
     // TODO: these would probably get removed in favor of the more general ggml_quantize_chunk
+    // PABLO:
+    GGML_API size_t ggml_quantize_pablo(const float * src, void * dst, int n, int k, int64_t * hist);
+    
     GGML_API size_t ggml_quantize_q4_0(const float * src, void * dst, int n, int k, int64_t * hist);
     GGML_API size_t ggml_quantize_q4_1(const float * src, void * dst, int n, int k, int64_t * hist);
     GGML_API size_t ggml_quantize_q5_0(const float * src, void * dst, int n, int k, int64_t * hist);

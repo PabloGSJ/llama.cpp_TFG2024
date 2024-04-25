@@ -508,6 +508,38 @@ static const ggml_type_traits_t type_traits[GGML_TYPE_COUNT] = {
         .nrows                    = 1,
 #endif
     },
+    [GGML_TYPE_PABLO] = {
+        .type_name                = "pablo",
+        .blck_size                = QK4_0,
+        .type_size                = sizeof(block_q4_0),
+        .is_quantized             = true,
+        .to_float                 = (ggml_to_float_t) dequantize_row_q4_0,  // PABLO: cambiar
+        .from_float               = quantize_row_pablo,
+        .from_float_reference     = (ggml_from_float_t) quantize_row_pablo_reference,
+        .vec_dot                  = ggml_vec_dot_q4_0_q8_0,
+        .vec_dot_type             = GGML_TYPE_Q8_0,
+#if defined (__ARM_FEATURE_MATMUL_INT8)
+        .nrows                    = 2,
+#else
+        .nrows                    = 1,
+#endif
+    },
+    [GGML_TYPE_PABLO_IMPRECISE] = {
+        .type_name                = "pablo_imprecise",
+        .blck_size                = QK4_0,
+        .type_size                = sizeof(block_q4_0),
+        .is_quantized             = true,
+        .to_float                 = (ggml_to_float_t) dequantize_row_q4_0,  // PABLO: cambiar
+        .from_float               = quantize_row_pablo_imprecise,
+        .from_float_reference     = (ggml_from_float_t) quantize_row_pablo_imprecise_reference,
+        .vec_dot                  = ggml_vec_dot_q4_0_q8_0,
+        .vec_dot_type             = GGML_TYPE_Q8_0,
+#if defined (__ARM_FEATURE_MATMUL_INT8)
+        .nrows                    = 2,
+#else
+        .nrows                    = 1,
+#endif
+    },
     [GGML_TYPE_Q4_1] = {
         .type_name                = "q4_1",
         .blck_size                = QK4_1,
@@ -19787,6 +19819,35 @@ void pablo_print_all_ggml() {
     pablo_print_all();
 }
 
+size_t ggml_quantize_pablo(const float * src, void * dst, int n, int k, int64_t * hist) {
+    assert(k % QK4_0 == 0);
+    const int nb = k / QK4_0;
+
+    for (int b = 0; b < n; b += k) {
+        block_q4_0 * restrict y = (block_q4_0 *) dst + b/QK4_0;
+
+        // PABLO: get the current row id
+        pablo_rid = (b / k) - 1;
+        
+        quantize_row_pablo_reference(src + b, y, k);
+
+        // PABLO: print the current row histogram
+        pablo_print_row();
+
+        for (int i = 0; i < nb; i++) {
+            for (int j = 0; j < QK4_0; j += 2) {
+                const uint8_t vi0 = y[i].qs[j/2] & 0x0F;
+                const uint8_t vi1 = y[i].qs[j/2] >> 4;
+
+                hist[vi0]++;
+                hist[vi1]++;
+            }
+        }
+    }
+
+    return (n/QK4_0*sizeof(block_q4_0));
+}
+
 size_t ggml_quantize_q4_0(const float * src, void * dst, int n, int k, int64_t * hist) {
     assert(k % QK4_0 == 0);
     const int nb = k / QK4_0;
@@ -19933,6 +19994,15 @@ size_t ggml_quantize_chunk(enum ggml_type type, const float * src, void * dst, i
     size_t result = 0;
     int n = nrows * n_per_row;
     switch (type) {
+        case GGML_TYPE_PABLO:
+            {
+                GGML_ASSERT(start % QK4_0 == 0);
+                GGML_ASSERT(start % n_per_row == 0);
+                size_t start_row = start / n_per_row;
+                size_t row_size = ggml_row_size(type, n_per_row);
+                result = quantize_pablo(src + start, (char *)dst + start_row * row_size, nrows, n_per_row, hist, imatrix);
+                GGML_ASSERT(result == row_size * nrows);
+            } break;
         case GGML_TYPE_Q4_0:
             {
                 GGML_ASSERT(start % QK4_0 == 0);

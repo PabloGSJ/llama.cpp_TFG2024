@@ -2617,6 +2617,7 @@ struct llama_model_loader {
             }
 
             switch (type_max) {
+                case GGML_TYPE_PABLO:   ftype = LLAMA_FTYPE_MOSTLY_PABLO;   break;
                 case GGML_TYPE_F32:     ftype = LLAMA_FTYPE_ALL_F32;        break;
                 case GGML_TYPE_F16:     ftype = LLAMA_FTYPE_MOSTLY_F16;     break;
                 case GGML_TYPE_Q4_0:    ftype = LLAMA_FTYPE_MOSTLY_Q4_0;    break;
@@ -2968,6 +2969,7 @@ static std::string llama_model_ftype_name(llama_ftype ftype) {
     }
 
     switch (ftype) {
+        case LLAMA_FTYPE_MOSTLY_PABLO: return "PABLO";
         case LLAMA_FTYPE_ALL_F32:     return "all F32";
         case LLAMA_FTYPE_MOSTLY_F16:  return "F16";
         case LLAMA_FTYPE_MOSTLY_Q4_0: return "Q4_0";
@@ -4739,6 +4741,7 @@ static int llama_model_load(const std::string & fname, llama_model & model, llam
             || !(
                 model.ftype == LLAMA_FTYPE_ALL_F32 ||
                 model.ftype == LLAMA_FTYPE_MOSTLY_F16 ||
+                model.ftype == LLAMA_FTYPE_MOSTLY_PABLO ||
                 model.ftype == LLAMA_FTYPE_MOSTLY_Q4_0 ||
                 model.ftype == LLAMA_FTYPE_MOSTLY_Q4_1
             )
@@ -11360,6 +11363,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
     llama_ftype ftype = params->ftype;
 
     switch (params->ftype) {
+        case LLAMA_FTYPE_MOSTLY_PABLO: quantized_type = GGML_TYPE_PABLO; break;
         case LLAMA_FTYPE_MOSTLY_Q4_0: quantized_type = GGML_TYPE_Q4_0; break;
         case LLAMA_FTYPE_MOSTLY_Q4_1: quantized_type = GGML_TYPE_Q4_1; break;
         case LLAMA_FTYPE_MOSTLY_Q5_0: quantized_type = GGML_TYPE_Q5_0; break;
