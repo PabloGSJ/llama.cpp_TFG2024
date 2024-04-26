@@ -538,114 +538,13 @@ static const uint64_t table_b2b_1[1 << 8] = { B8(10, 00) }; // (!b) << 4
 
 // PABLO: quantize 8 -> 0
 void quantize_row_pablo_reference(const float * restrict x, block_q4_0 * restrict y, int k) {
-
-    static const int qk = QK4_0;
-
-    assert(k % qk == 0);
-
-    const int nb = k / qk;
-
-    // i loop:
-    for (int i = 0; i < nb; i++) {  
-        float amax = 0.0f; // absolute max
-        float max  = 0.0f;
-
-        // j 1 loop:
-        for (int j = 0; j < qk; j++) {
-
-            const float v = x[i*qk + j];
-            if (amax < fabsf(v)) {
-                amax = fabsf(v);
-                max  = v;
-            }
-        }
-
-        const float d  = max / -8;
-        const float id = d ? 1.0f/d : 0.0f;
-
-        y[i].d = GGML_FP32_TO_FP16(d);
-
-        // j 2 loop:
-        for (int j = 0; j < qk; j++) {
-
-            const float x0 = x[i*qk + 0 + j]*id;
-
-            const uint8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8.0f;
-
-            y[i].qs[j]  = xi0;
-
-            pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;   // apply offset to save into the real values
-
-            if (xi0 == PABLO_SEEKED_INT) {
-                // keep adding occurences
-                pablo_occurrences++;
-
-            } else if (pablo_occurrences > 0) {
-                // save number of occurrences observed
-                if (pablo_occurrences > 16) 
-                    pablo_occurrences = 16;
-                pablo_grouping_hist[pablo_occurrences - 1]++;
-
-                pablo_occurrences = 0;
-            }
-        }
-    }
+    pablo_quantize_row(x, y, k);
+    pablo_quantize_row_imprecise(x, y, k);
 }
 
 void quantize_row_pablo(const float * restrict x, void * restrict y, int k) {
     quantize_row_pablo_reference(x, y, k);
     //quantize_row_pablo_imprecise_reference(x, y, k);
-}
-
-// PABLO: quantize {7, 8, 9} -> 0 (less precission)
-void quantize_row_pablo_imprecise_reference(const float * restrict x, block_q4_0 * restrict y, int k) {
-
-    static const int qk = QK4_0;
-
-    assert(k % qk == 0);
-
-    const int nb = k / qk;
-
-    // i loop:
-    for (int i = 0; i < nb; i++) {  
-        float amax = 0.0f; // absolute max
-        float max  = 0.0f;
-
-        // j 1 loop:
-        for (int j = 0; j < qk; j++) {
-
-            const float v = x[i*qk + j];
-            if (amax < fabsf(v)) {
-                amax = fabsf(v);
-                max  = v;
-            }
-        }
-
-        const float d  = max / -8;
-        const float id = d ? 1.0f/d : 0.0f;
-
-        y[i].d = GGML_FP32_TO_FP16(d);
-
-        // j 2 loop:
-        for (int j = 0; j < qk/2; ++j) {
-
-            const float x0 = x[i*qk + 0    + j]*id;
-            const float x1 = x[i*qk + qk/2 + j]*id;
-
-            uint8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8.0f;
-            uint8_t xi1 = MIN(15, (int8_t)(x1 + 8.5f)) - 8.0f;
-            if (xi0 <= 1 || xi0 >= -1)
-                xi0 = 0;
-            if (xi1 <= 1 || xi1 >= -1)
-                xi1 = 0;
-
-            y[i].qs[j]  = xi0;
-            y[i].qs[j] |= xi1 << 4;
-
-            pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;
-            pablo_histogram[pablo_tid][pablo_rid][xi1 + 8]++;
-        }
-    }
 }
 
 // reference implementation for deterministic creation of model files

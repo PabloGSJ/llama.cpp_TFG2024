@@ -3,6 +3,8 @@
 #ifndef PABLO_H
 #define PABLO_H
 
+#include "ggml-quants.h"
+
 // DEBUG
 //#define _PABLO_PRINT_ROW
 //#define _PABLO_PRINT_TENSOR
@@ -35,5 +37,9 @@ extern int pablo_occurrences;
 void pablo_print_row(void);
 void pablo_print_tensor(void);
 void pablo_print_all(void);
+
+// custom quantization and dequantization functions
+void pablo_quantize_row(const float * restrict x, block_q4_0 * restrict y, int k);
+void pablo_quantize_row_imprecise(const float * restrict x, block_q4_0 * restrict y, int k);
 
 #endif /* PABLO_H */
