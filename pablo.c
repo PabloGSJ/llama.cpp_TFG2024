@@ -9,7 +9,7 @@ int pablo_tid = 0;
 int pablo_rid = 0;
 int pablo_occurrences = 0;
 int pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
-int pablo_grouping_hist[PABLO_MAX_GROUPING] = {0};
+int unsigned pablo_grouping_hist[PABLO_MAX_GROUPING] = {0};
 
 // Define pablo.h functions
 void pablo_print_all(void) {    // formato json
