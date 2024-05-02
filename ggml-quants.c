@@ -536,15 +536,14 @@ static const uint64_t table_b2b_0[1 << 8] = { B8(00, 10) }; // ( b) << 4
 static const uint64_t table_b2b_1[1 << 8] = { B8(10, 00) }; // (!b) << 4
 #endif
 
-// PABLO: quantize 8 -> 0
+// PABLO:
 void quantize_row_pablo_reference(const float * restrict x, block_q4_0 * restrict y, int k) {
     pablo_quantize_row(x, y, k);
-    pablo_quantize_row_imprecise(x, y, k);
+    //pablo_quantize_row_imprecise(x, y, k);
 }
 
 void quantize_row_pablo(const float * restrict x, void * restrict y, int k) {
     quantize_row_pablo_reference(x, y, k);
-    //quantize_row_pablo_imprecise_reference(x, y, k);
 }
 
 // reference implementation for deterministic creation of model files
