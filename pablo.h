@@ -30,6 +30,9 @@
 #define PABLO_MAX_GROUPING      16
 #define PABLO_SEEKED_INT        0
 
+// Control which quantization-dequantization will be used
+#define PABLO_PRECISION_QUANTIZATION
+
 // VARIABLES
 // histogram with number of times a given int is quantized to
 extern int pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST];
@@ -48,7 +51,12 @@ void pablo_print_tensor(void);
 void pablo_print_all(void);
 
 // custom quantization and dequantization functions
+void pablo_quantize_row_assign(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
 void pablo_quantize_row(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
 void pablo_quantize_row_imprecise(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
+
+void pablo_dequantize_row_assign(const block_q4_0 * GGML_RESTRICT x, float * GGML_RESTRICT y, int k);
+void pablo_dequantize_row(const block_q4_0 * GGML_RESTRICT x, float * GGML_RESTRICT y, int k);
+void pablo_dequantize_row_imprecise(const block_q4_0 * GGML_RESTRICT x, float * GGML_RESTRICT y, int k);
 
 #endif /* PABLO_H */
