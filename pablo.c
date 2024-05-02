@@ -1,6 +1,9 @@
 #include "pablo.h"
 #include <stdio.h>
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
 // Initialize pablo.h variables
 int pablo_tid = 0;
 int pablo_rid = 0;
