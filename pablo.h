@@ -48,7 +48,7 @@ void pablo_print_tensor(void);
 void pablo_print_all(void);
 
 // custom quantization and dequantization functions
-void pablo_quantize_row(const float * GGML_RESTRICT x, block_q4_0 * restrict y, int k);
-void pablo_quantize_row_imprecise(const float * GGML_RESTRICT x, block_q4_0 * restrict y, int k);
+void pablo_quantize_row(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
+void pablo_quantize_row_imprecise(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
 
 #endif /* PABLO_H */
