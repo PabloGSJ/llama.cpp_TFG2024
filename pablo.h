@@ -5,6 +5,15 @@
 
 #include "ggml-quants.h"
 
+#include "ggml-impl.h"
+
+#include <math.h>
+#include <string.h>
+#include <assert.h>
+#include <float.h>
+#include <stdlib.h> // for qsort
+#include <stdio.h>  // for GGML_ASSERT
+
 // DEBUG
 //#define _PABLO_PRINT_ROW
 //#define _PABLO_PRINT_TENSOR
