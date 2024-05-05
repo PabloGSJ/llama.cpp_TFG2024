@@ -35,13 +35,15 @@
 
 // VARIABLES
 // histogram with number of times a given int is quantized to
-extern int pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST];
+extern unsigned int pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST];
 extern int pablo_tid;   // active tensor id
 extern int pablo_rid;   // active row id
 
 // histogram with agrupation rates a given int repeats
-extern unsigned int pablo_grouping_hist[PABLO_MAX_GROUPING];
+extern long unsigned int pablo_grouping_hist[PABLO_MAX_GROUPING];
 extern int pablo_occurrences;
+extern long unsigned int pablo_unocurrences_grouping_hist[PABLO_MAX_GROUPING];
+extern int pablo_unoccurrences;
 
 
 
@@ -51,9 +53,9 @@ void pablo_print_tensor(void);
 void pablo_print_all(void);
 
 // custom quantization and dequantization functions
-void pablo_quantize_row_assign(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
-void pablo_quantize_row(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
-void pablo_quantize_row_imprecise(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
+void pablo_quantize_row_assign(const float * GGML_RESTRICT x, block_pablo * GGML_RESTRICT y, int k);
+void pablo_quantize_row(const float * GGML_RESTRICT x, block_pablo * GGML_RESTRICT y, int k);
+void pablo_quantize_row_imprecise(const float * GGML_RESTRICT x, block_pablo * GGML_RESTRICT y, int k);
 
 void pablo_dequantize_row_assign(const block_q4_0 * GGML_RESTRICT x, float * GGML_RESTRICT y, int k);
 void pablo_dequantize_row(const block_q4_0 * GGML_RESTRICT x, float * GGML_RESTRICT y, int k);

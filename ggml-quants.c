@@ -537,7 +537,7 @@ static const uint64_t table_b2b_1[1 << 8] = { B8(10, 00) }; // (!b) << 4
 #endif
 
 // PABLO:
-void quantize_row_pablo_reference(const float * restrict x, block_q4_0 * restrict y, int k) {
+void quantize_row_pablo_reference(const float * restrict x, block_pablo * restrict y, int k) {
     pablo_quantize_row_assign(x, y, k);
 }
 
@@ -1203,6 +1203,7 @@ void quantize_row_q8_1(const float * restrict x, void * restrict vy, int k) {
 void dequantize_row_pablo(const block_q4_0 * restrict x, float * restrict y, int k) {
     //pablo_dequantize_row_assign(x, y, k);
     printf("HA FUNCIONADO!!!\n");
+    exit(0);
 }
 
 void dequantize_row_q4_0(const block_q4_0 * restrict x, float * restrict y, int k) {

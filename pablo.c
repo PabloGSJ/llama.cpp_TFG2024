@@ -8,8 +8,10 @@
 int pablo_tid = 0;
 int pablo_rid = 0;
 int pablo_occurrences = 0;
-int pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
-int unsigned pablo_grouping_hist[PABLO_MAX_GROUPING] = {0};
+int pablo_unoccurrences = 0;
+int unsigned pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
+int long unsigned pablo_grouping_hist[PABLO_MAX_GROUPING] = {0};
+int long unsigned pablo_unocurrences_grouping_hist[PABLO_MAX_GROUPING] = {0};
 
 // Define pablo.h functions
 void pablo_print_all(void) {    // formato json
@@ -25,7 +27,7 @@ void pablo_print_all(void) {    // formato json
                 printf("{\"row\":[");
 
                 for (int h = 0; h < PABLO_NUM_HIST; h++) {
-                    printf("%d, ", pablo_histogram[t][r][h]);
+                    printf("%u, ", pablo_histogram[t][r][h]);
                 }
                 printf("\b\b]}, ");
             }
@@ -37,7 +39,7 @@ void pablo_print_all(void) {    // formato json
         printf("{\"grouping\":[");
 
         for (int h = 0; h < PABLO_MAX_GROUPING; h++) {
-            printf("%d, ", pablo_histogram[h]);
+            printf("%lu, ", pablo_histogram[h]);
 
         }
         printf("\b\b]}\n");
@@ -77,7 +79,7 @@ void pablo_print_tensor() {
 }
 
 // Quantization functions
-void pablo_quantize_row_assign(const float * restrict x, block_q4_0 * restrict y, int k) {
+void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
     
     #ifdef PABLO_PRECISION_QUANTIZATION
         pablo_quantize_row(x, y, k);
@@ -88,7 +90,7 @@ void pablo_quantize_row_assign(const float * restrict x, block_q4_0 * restrict y
     #endif
 }
 
-void pablo_quantize_row(const float * restrict x, block_q4_0 * restrict y, int k) {
+void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int k) {
 
     static const int qk = QK4_0;
 
@@ -121,29 +123,40 @@ void pablo_quantize_row(const float * restrict x, block_q4_0 * restrict y, int k
 
             const float x0 = x[i*qk + 0 + j]*id;
 
-            const uint8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8.0f;
+            int8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8;
 
-            y[i].qs[j]  = xi0;
+            y[i].qs[j] = xi0;
 
-            pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;   // apply offset to save into the real values
+            pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;   // apply offset to save into the positive values
 
             if (xi0 == PABLO_SEEKED_INT) {
                 // keep adding occurences
                 pablo_occurrences++;
-
-            } else if (pablo_occurrences > 0) {
+            } 
+            else if (pablo_occurrences > 0) {
                 // save number of occurrences observed
                 if (pablo_occurrences > 16) 
                     pablo_occurrences = 16;
                 pablo_grouping_hist[pablo_occurrences - 1]++;
 
                 pablo_occurrences = 0;
-            }
+            } 
+
+            // if (xi0 != PABLO_SEEKED_INT) {
+            //     pablo_unoccurrences++;
+            // }
+            // else if (pablo_unoccurrences > 0) {
+            //     if (pablo_unoccurrences > 16)
+            //         pablo_unoccurrences = 16;
+            //     pablo_unocurrences_grouping_hist[pablo_unoccurrences - 1]++;
+
+            //     pablo_unoccurrences = 0;
+            // }
         }
     }
 }
 
-void pablo_quantize_row_imprecise(const float * restrict x, block_q4_0 * restrict y, int k) {
+void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
 
     static const int qk = QK4_0;
 
@@ -176,7 +189,7 @@ void pablo_quantize_row_imprecise(const float * restrict x, block_q4_0 * restric
 
             const float x0 = x[i*qk + 0 + j]*id;
 
-            uint8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8.0f;
+            int8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8;
             if (xi0 == 1 || xi0 == -1)
                 xi0 = 0;
 

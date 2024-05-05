@@ -7,6 +7,15 @@
 #include <stdint.h>
 #include <stddef.h>
 
+// PABLO: todo
+
+#define PABLO 32
+typedef struct {
+    ggml_fp16_t d;          // delta
+    int8_t qs[PABLO / 2];   // nibbles / quants
+} block_pablo;
+static_assert(sizeof(block_pablo) == sizeof(ggml_fp16_t) + PABLO / 2, "wrong PABLO block size/padding");
+
 #define QK4_0 32
 typedef struct {
     ggml_fp16_t d;          // delta
