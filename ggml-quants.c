@@ -582,9 +582,6 @@ void quantize_row_q4_0_reference(const float * restrict x, block_q4_0 * restrict
 
             y[i].qs[j]  = xi0;
             y[i].qs[j] |= xi1 << 4;
-
-            pablo_histogram[pablo_tid][pablo_rid][xi0]++;
-            pablo_histogram[pablo_tid][pablo_rid][xi1]++;
         }
     }
 }
@@ -3156,7 +3153,7 @@ size_t quantize_q6_K(const float * src, void * dst, int nrow, int n_per_row, int
 }
 
 // PABLO:
-static void quantize_row_pablo_impl(const float * restrict x, block_q4_0 * restrict y, int n_per_row, const float * quant_weights) {
+static void quantize_row_pablo_impl(const float * restrict x, block_pablo * restrict y, int n_per_row, const float * quant_weights) {
     static_assert(QK4_0 == 32, "QK4_0 must be 32");
 
     if (!quant_weights) {
@@ -3220,7 +3217,7 @@ size_t quantize_pablo(const float * src, void * dst, int nrow, int n_per_row, in
     size_t row_size = ggml_row_size(GGML_TYPE_Q4_0, n_per_row);
     char * qrow = (char *)dst;
     for (int row = 0; row < nrow; ++row) {
-        quantize_row_pablo_impl(src, (block_q4_0*)qrow, n_per_row, quant_weights);
+        quantize_row_pablo_impl(src, (block_pablo*)qrow, n_per_row, quant_weights);
         src += n_per_row;
         qrow += row_size;
     }

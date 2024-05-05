@@ -19810,7 +19810,7 @@ size_t ggml_quantize_pablo(const float * src, void * dst, int n, int k, int64_t 
     const int nb = k / QK4_0;
 
     for (int b = 0; b < n; b += k) {
-        block_q4_0 * restrict y = (block_q4_0 *) dst + b/QK4_0;
+        block_pablo * restrict y = (block_pablo *) dst + b/QK4_0;
 
         // PABLO: get the current row id
         pablo_rid = (b / k) - 1;
