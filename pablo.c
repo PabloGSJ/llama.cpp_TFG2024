@@ -39,7 +39,7 @@ void pablo_print_all(void) {    // formato json
         printf("{\"grouping\":[");
 
         for (int h = 0; h < PABLO_MAX_GROUPING; h++) {
-            printf("%lu, ", pablo_histogram[h]);
+            printf("%lu, ", pablo_grouping_hist[h]);
 
         }
         printf("\b\b]}\n");
