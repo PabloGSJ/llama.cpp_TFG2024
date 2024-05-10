@@ -201,7 +201,7 @@ void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restri
 
             pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;
 
-            if (xi0 == PABLO_SEEKED_INT && pablo_occurrences <= 16) {
+            if (xi0 == PABLO_SEEKED_INT) {
                 // keep adding occurences
                 pablo_occurrences++;
 
@@ -213,6 +213,9 @@ void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restri
 
                 pablo_occurrences = 0;
             }
+
+            if (pablo_occurrences > 16)
+                pablo_occurrences = 16;
         }
     }
 }
