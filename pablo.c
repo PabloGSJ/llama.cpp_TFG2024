@@ -10,7 +10,7 @@ int pablo_rid = 0;
 int unsigned pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
 
 long unsigned pablo_grouping_hist[PABLO_MAX_GROUPING] = {0};
-long unsigned pablo_occurrences = 0;
+int pablo_occurrences = 0;
 long unsigned pablo_unocurrences_grouping_hist[PABLO_MAX_GROUPING] = {0};
 int pablo_unoccurrences = 0;
 
