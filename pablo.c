@@ -7,11 +7,12 @@
 // Initialize pablo.h variables
 int pablo_tid = 0;
 int pablo_rid = 0;
-long unsigned pablo_occurrences = 0;
-int pablo_unoccurrences = 0;
 int unsigned pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
+
 long unsigned pablo_grouping_hist[PABLO_MAX_GROUPING] = {0};
+long unsigned pablo_occurrences = 0;
 long unsigned pablo_unocurrences_grouping_hist[PABLO_MAX_GROUPING] = {0};
+int pablo_unoccurrences = 0;
 
 // Define pablo.h functions
 void pablo_print_all(void) {    // formato json
@@ -129,7 +130,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
 
             pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;   // apply offset to save into the positive values
 
-            if (xi0 == PABLO_SEEKED_INT && pablo_occurrences <= 16) {
+            if (xi0 == PABLO_SEEKED_INT) {
                 // keep adding occurences
                 pablo_occurrences++;
             } 
@@ -152,6 +153,9 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
 
             //     pablo_unoccurrences = 0;
             // }
+
+            if (pablo_occurrences > 16)
+                pablo_occurrences = 16;
         }
     }
 }
