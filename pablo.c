@@ -20,7 +20,7 @@ void pablo_print_all(void) {    // formato json
         printf("{\"pablo\":{");
 
         // print tensor histogram
-        printf("{\"tensors\":[");
+        printf("\"tensors\":[");
 
         for (int t = 0; t < PABLO_NUM_TENSORS; t++) {
             printf("{\"tensor\":[");
@@ -38,7 +38,7 @@ void pablo_print_all(void) {    // formato json
         printf("\b\b],");
 
         // print grouping histogram
-        printf("{\"grouping\":[");
+        printf("\"grouping\":[");
 
         for (int t = 0; t < PABLO_NUM_TENSORS; t++) {
             printf("{\"tensor\":[");
@@ -56,7 +56,7 @@ void pablo_print_all(void) {    // formato json
         printf("\b\b],");
 
         // print antigrouping histogram
-        printf("{\"antigrouping\":[");
+        printf("\"antigrouping\":[");
 
         for (int t = 0; t < PABLO_NUM_TENSORS; t++) {
             printf("{\"tensor\":[");
@@ -65,7 +65,7 @@ void pablo_print_all(void) {    // formato json
                 printf("{\"row\":[");
 
                 for (int h = 0; h < PABLO_NUM_HIST; h++) {
-                    printf("%lu, ", pablo_grouping_hist[t][r][h]);
+                    printf("%lu, ", pablo_antigrouping_hist[t][r][h]);
                 }
                 printf("\b\b]}, ");
             }
