@@ -7,11 +7,11 @@
 // Initialize pablo.h variables
 int pablo_tid = 0;
 int pablo_rid = 0;
-int unsigned pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
+unsigned pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
 
-long unsigned pablo_grouping_hist[PABLO_MAX_GROUPING] = {0};
+long unsigned pablo_grouping_hist[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_MAX_GROUPING] = {0};
 int pablo_occurrences = 0;
-long unsigned pablo_unocurrences_grouping_hist[PABLO_MAX_GROUPING] = {0};
+long unsigned pablo_unocurrences_grouping_hist[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_MAX_GROUPING] = {0};
 int pablo_unoccurrences = 0;
 
 // Define pablo.h functions
@@ -39,11 +39,20 @@ void pablo_print_all(void) {    // formato json
         // print grouping histogram
         printf("{\"grouping\":[");
 
-        for (int h = 0; h < PABLO_MAX_GROUPING; h++) {
-            printf("%lu, ", pablo_grouping_hist[h]);
+        for (int t = 0; t < PABLO_NUM_TENSORS; t++) {
+            printf("{\"tensor\":[");
 
+            for (int r = 0; r < PABLO_NUM_ROWS; r++)  {
+                printf("{\"row\":[");
+
+                for (int h = 0; h < PABLO_NUM_HIST; h++) {
+                    printf("%lu, ", pablo_grouping_hist[t][r][h]);
+                }
+                printf("\b\b]}, ");
+            }
+            printf("\b\b]}, ");
         }
-        printf("\b\b]}\n");
+        printf("\b\b]}\n\n");
         
     #endif /* _PABLO_PRINT_ALL  */
 }
@@ -92,7 +101,8 @@ void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict 
 }
 
 void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int k) {
-
+    
+    pablo_occurrences = 0;
     static const int qk = QK4_0;
 
     assert(k % qk == 0);
@@ -138,7 +148,8 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
                 // save number of occurrences observed
                 if (pablo_occurrences > 16) 
                     pablo_occurrences = 16;
-                pablo_grouping_hist[pablo_occurrences - 1]++;
+                pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]++;
+                fprintf(stderr, "\nPABLO gh: %lu\n", pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]);
 
                 pablo_occurrences = 0;
             } 
@@ -209,7 +220,7 @@ void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restri
                 // save number of occurrences observed
                 if (pablo_occurrences > 16) 
                     pablo_occurrences = 16;
-                pablo_grouping_hist[pablo_occurrences - 1]++;
+                pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]++;
 
                 pablo_occurrences = 0;
             }

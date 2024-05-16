@@ -40,9 +40,9 @@ extern int pablo_tid;   // active tensor id
 extern int pablo_rid;   // active row id
 
 // histogram with agrupation rates a given int repeats
-extern long unsigned pablo_grouping_hist[PABLO_MAX_GROUPING];
+extern long unsigned pablo_grouping_hist[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_MAX_GROUPING];
 extern int pablo_occurrences;
-extern long unsigned int pablo_unocurrences_grouping_hist[PABLO_MAX_GROUPING];
+extern long unsigned int pablo_unocurrences_grouping_hist[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_MAX_GROUPING];
 extern int pablo_unoccurrences;
 
 
