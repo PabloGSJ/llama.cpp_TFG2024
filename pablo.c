@@ -56,7 +56,7 @@ void pablo_print_all(void) {    // formato json
         printf("\b\b],");
 
         // print antigrouping histogram
-        printf("{\"grouping\":[");
+        printf("{\"antigrouping\":[");
 
         for (int t = 0; t < PABLO_NUM_TENSORS; t++) {
             printf("{\"tensor\":[");
