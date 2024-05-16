@@ -11,12 +11,13 @@ unsigned pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0
 
 long unsigned pablo_grouping_hist[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_MAX_GROUPING] = {0};
 int pablo_occurrences = 0;
-long unsigned pablo_unocurrences_grouping_hist[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_MAX_GROUPING] = {0};
-int pablo_unoccurrences = 0;
+long unsigned pablo_antigrouping_hist[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_MAX_GROUPING] = {0};
+int pablo_antioccurrences = 0;
 
 // Define pablo.h functions
 void pablo_print_all(void) {    // formato json
     #ifdef _PABLO_PRINT_ALL
+        printf("{\"pablo\":{");
 
         // print tensor histogram
         printf("{\"tensors\":[");
@@ -34,7 +35,7 @@ void pablo_print_all(void) {    // formato json
             }
             printf("\b\b]}, ");
         }
-        printf("\b\b]}\n\n");
+        printf("\b\b],");
 
         // print grouping histogram
         printf("{\"grouping\":[");
@@ -52,8 +53,27 @@ void pablo_print_all(void) {    // formato json
             }
             printf("\b\b]}, ");
         }
-        printf("\b\b]}\n\n");
+        printf("\b\b],");
+
+        // print antigrouping histogram
+        printf("{\"grouping\":[");
+
+        for (int t = 0; t < PABLO_NUM_TENSORS; t++) {
+            printf("{\"tensor\":[");
+
+            for (int r = 0; r < PABLO_NUM_ROWS; r++)  {
+                printf("{\"row\":[");
+
+                for (int h = 0; h < PABLO_NUM_HIST; h++) {
+                    printf("%lu, ", pablo_grouping_hist[t][r][h]);
+                }
+                printf("\b\b]}, ");
+            }
+            printf("\b\b]}, ");
+        }
+        printf("\b\b]");
         
+        printf("}}\n\n");
     #endif /* _PABLO_PRINT_ALL  */
 }
 
@@ -93,7 +113,7 @@ void pablo_update(int8_t xi0) {
 
     pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;   // apply offset to save into the positive values
 
-            if (xi0 == PABLO_SEEKED_INT) {
+            if (xi0 == 0) {     // PABLO_SEEKED_INT
                 // keep adding occurences
                 pablo_occurrences++;
             } 
@@ -106,6 +126,21 @@ void pablo_update(int8_t xi0) {
                 fprintf(stderr, "\nPABLO gh[%d]: %lu\n", pablo_occurrences - 1, pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]);
 
                 pablo_occurrences = 0;
+            } 
+
+            if (xi0 != 0) {     // PABLO_SEEKED_INT
+                // keep adding occurences
+                pablo_occurrences++;
+            } 
+            else if (pablo_antioccurrences > 0) {
+                // save number of occurrences observed
+                if (pablo_antioccurrences > 16) 
+                    pablo_antioccurrences = 16;
+                pablo_antigrouping_hist[pablo_tid][pablo_rid][pablo_antioccurrences - 1]++;
+                
+                fprintf(stderr, "\nPABLO gh[%d]: %lu\n", pablo_antioccurrences - 1, pablo_antigrouping_hist[pablo_tid][pablo_rid][pablo_antioccurrences - 1]);
+
+                pablo_antioccurrences = 0;
             } 
 }
 
@@ -123,7 +158,8 @@ void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict 
 
 void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int k) {
     
-    pablo_occurrences = 0;
+    pablo_occurrences = 0; 
+    pablo_antioccurrences = 0;
     static const int qk = QK4_0;
 
     assert(k % qk == 0);
@@ -166,6 +202,8 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
 
 void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
 
+    pablo_occurrences = 0;
+    pablo_antioccurrences = 0;
     static const int qk = QK4_0;
 
     assert(k % qk == 0);
