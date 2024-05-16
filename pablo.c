@@ -88,6 +88,27 @@ void pablo_print_tensor() {
     #endif /* _PABLO_PRINT_TENSOR */
 }
 
+// print all the necessary information per iteration
+void pablo_update(int8_t xi0) {
+
+    pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;   // apply offset to save into the positive values
+
+            if (xi0 == PABLO_SEEKED_INT) {
+                // keep adding occurences
+                pablo_occurrences++;
+            } 
+            else if (pablo_occurrences > 0) {
+                // save number of occurrences observed
+                if (pablo_occurrences > 16) 
+                    pablo_occurrences = 16;
+                pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]++;
+                
+                fprintf(stderr, "\nPABLO gh[%d]: %lu\n", pablo_occurrences - 1, pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]);
+
+                pablo_occurrences = 0;
+            } 
+}
+
 // Quantization functions
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
     
@@ -138,35 +159,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
 
             y[i].qs[j] = xi0;
 
-            pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;   // apply offset to save into the positive values
-
-            if (xi0 == PABLO_SEEKED_INT) {
-                // keep adding occurences
-                pablo_occurrences++;
-            } 
-            else if (pablo_occurrences > 0) {
-                // save number of occurrences observed
-                if (pablo_occurrences > 16) 
-                    pablo_occurrences = 16;
-                pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]++;
-                fprintf(stderr, "\nPABLO gh: %lu\n", pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]);
-
-                pablo_occurrences = 0;
-            } 
-
-            // if (xi0 != PABLO_SEEKED_INT) {
-            //     pablo_unoccurrences++;
-            // }
-            // else if (pablo_unoccurrences > 0) {
-            //     if (pablo_unoccurrences > 16)
-            //         pablo_unoccurrences = 16;
-            //     pablo_unocurrences_grouping_hist[pablo_unoccurrences - 1]++;
-
-            //     pablo_unoccurrences = 0;
-            // }
-
-            if (pablo_occurrences > 16)
-                pablo_occurrences = 16;
+            pablo_update(xi0);
         }
     }
 }
@@ -210,23 +203,7 @@ void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restri
 
             y[i].qs[j]  = xi0;
 
-            pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;
-
-            if (xi0 == PABLO_SEEKED_INT) {
-                // keep adding occurences
-                pablo_occurrences++;
-
-            } else if (pablo_occurrences > 0) {
-                // save number of occurrences observed
-                if (pablo_occurrences > 16) 
-                    pablo_occurrences = 16;
-                pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]++;
-
-                pablo_occurrences = 0;
-            }
-
-            if (pablo_occurrences > 16)
-                pablo_occurrences = 16;
+            pablo_update(xi0);
         }
     }
 }
