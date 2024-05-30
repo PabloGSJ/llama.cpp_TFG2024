@@ -236,7 +236,7 @@ void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restri
             const float x0 = x[i*qk + 0 + j]*id;
 
             int8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8;
-            if (xi0 <= 2 || xi0 >= -2)
+            if (xi0 <= 2 && xi0 >= -2)
                 xi0 = 0;
 
             y[i].qs[j]  = xi0;
