@@ -35,7 +35,7 @@ void pablo_print_all(void) {    // formato json
             }
             printf("\b\b]}, ");
         }
-        printf("\b\b],");
+/*      printf("\b\b], ");
 
         // print grouping histogram
         printf("\"grouping\":[");
@@ -71,8 +71,8 @@ void pablo_print_all(void) {    // formato json
             }
             printf("\b\b]}, ");
         }
-        printf("\b\b]");
-        
+*/      printf("\b\b]");
+
         printf("}}\n\n");
     #endif /* _PABLO_PRINT_ALL  */
 }
