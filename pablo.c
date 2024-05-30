@@ -161,6 +161,10 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     pablo_occurrences = 0; 
     pablo_antioccurrences = 0;
 
+    // TEMPORAL:
+    int pablo_array[PABLO_NUM_HIST] = {0};
+    int next_id = 0;
+
     // quantize_row_q8_0_reference
     assert(k % QK8_0 == 0);
     const int nb = k / QK8_0;
@@ -184,9 +188,8 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
             int8_t xi0 = roundf(x0);
 
             y[i].qs[j] = xi0;
-            printf("%d\n", xi0);
 
-            //pablo_update(xi0);
+            pablo_update(xi0 + 128);
         }
     }
 }
