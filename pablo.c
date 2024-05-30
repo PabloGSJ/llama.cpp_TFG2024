@@ -157,45 +157,36 @@ void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict 
 }
 
 void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int k) {
-    
+
     pablo_occurrences = 0; 
     pablo_antioccurrences = 0;
-    static const int qk = QK4_0;
 
-    assert(k % qk == 0);
+    // quantize_row_q8_0_reference
+    assert(k % QK8_0 == 0);
+    const int nb = k / QK8_0;
 
-    const int nb = k / qk;
-
-    // i loop:
-    for (int i = 0; i < nb; i++) {  
+    for (int i = 0; i < nb; i++) {
         float amax = 0.0f; // absolute max
-        float max  = 0.0f;
 
-        // j 1 loop:
-        for (int j = 0; j < qk; j++) {
-
-            const float v = x[i*qk + j];
-            if (amax < fabsf(v)) {
-                amax = fabsf(v);
-                max  = v;
-            }
+        for (int j = 0; j < QK8_0; j++) {
+            const float v = x[i*QK8_0 + j];
+            amax = MAX(amax, fabsf(v));
         }
 
-        const float d  = max / -8;
+        const float d = amax / ((1 << 7) - 1);
         const float id = d ? 1.0f/d : 0.0f;
 
         y[i].d = GGML_FP32_TO_FP16(d);
 
-        // j 2 loop:
-        for (int j = 0; j < qk; j++) {
+        for (int j = 0; j < QK8_0; ++j) {
+            const float x0 = x[i*QK8_0 + j]*id;
 
-            const float x0 = x[i*qk + 0 + j]*id;
-
-            int8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8;
+            int8_t xi0 = roundf(x0);
 
             y[i].qs[j] = xi0;
+            printf("%d\n", xi0);
 
-            pablo_update(xi0);
+            //pablo_update(xi0);
         }
     }
 }
