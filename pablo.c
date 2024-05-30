@@ -111,7 +111,7 @@ void pablo_print_tensor() {
 // print all the necessary information per iteration
 void pablo_update(int8_t xi0) {
 
-    pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;   // apply offset to save into the positive values
+    pablo_histogram[pablo_tid][pablo_rid][xi0 + 128]++;   // apply offset to save into the positive values
 
             if (xi0 == 0) {     // PABLO_SEEKED_INT
                 // keep adding occurences
@@ -189,7 +189,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
 
             y[i].qs[j] = xi0;
 
-            pablo_update(xi0 + 128);
+            pablo_update(xi0);
         }
     }
 }
