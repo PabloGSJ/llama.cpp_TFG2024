@@ -22,16 +22,20 @@ void pablo_print_all(void) {    // formato json
         // print tensor histogram
         printf("\"tensors\":[");
 
-        for (int t = 0; t < PABLO_NUM_TENSORS; t++) {
+        for (int t = 0; t < PABLO_NUM_TENSORS-1; t++) {
             printf("{\"tensor\":[");
 
+            // add all rows in the tensor
+            unsigned sum[PABLO_NUM_HIST] = {0};
             for (int r = 0; r < PABLO_NUM_ROWS; r++)  {
-                printf("{\"row\":[");
 
                 for (int h = 0; h < PABLO_NUM_HIST; h++) {
-                    printf("%u, ", pablo_histogram[t][r][h]);
+                    sum[h] += pablo_histogram[t][r][h];
                 }
-                printf("\b\b]}, ");
+            }
+
+            for (int h = 0; h < PABLO_NUM_HIST; h++) {
+                printf("%u, ", sum[h]);
             }
             printf("\b\b]}, ");
         }
