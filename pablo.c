@@ -130,7 +130,7 @@ void pablo_update(int8_t xi0) {
             pablo_occurrences = 16;
         pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]++;
         
-        fprintf(stderr, "\nPABLO gh[%d]: %lu\n", pablo_occurrences - 1, pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]);
+        //fprintf(stderr, "\nPABLO gh[%d]: %lu\n", pablo_occurrences - 1, pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]);
 
         pablo_occurrences = 0;
     }
@@ -155,7 +155,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     pablo_occurrences = 0; 
 
     // TEMPORAL:
-    int pablo_array[PABLO_NUM_HIST] = {0};
+    //int [PABLO_NUM_HIST] = {0};
     int next_id = 0;
 
     // quantize_row_q8_0_reference
