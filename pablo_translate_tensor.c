@@ -1,8 +1,10 @@
-#include "pablo.h"  
+#include <stdio.h>  
 
 #define MAX_STRING 100
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-int main(int argc, char * argv) {
+
+int main(int argc, char* argv[]) {
 
     if (argc < 2) {
         // ERROR: not enough arguments
@@ -20,12 +22,12 @@ int main(int argc, char * argv) {
     FILE *fin = fopen(fin_name, "rb");
     FILE *fout = fopen(fout_name, "wb");
 
-    while(s >= len(buffer)) {
+    while(s >= MAX_STRING) {
         
-        s = fread(buffer, len(buffer), fin);
-        s = min(s, len(buffer));
+        s = fread(buffer, sizeof(char), MAX_STRING, fin);
+        s = MIN(s, MAX_STRING);
 
-        fwrite(buffer, s, fout);
+        fwrite(buffer, sizeof(char), s, fout);
     }
 
 }
