@@ -12,6 +12,9 @@ unsigned pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0
 long unsigned pablo_grouping_hist[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_MAX_GROUPING] = {0};
 int pablo_occurrences = 0;
 
+// Local variables
+
+
 // initialize pablo data
 void pablo_init() {
 
@@ -118,22 +121,22 @@ void pablo_print_tensor() {
 // update pablo data
 void pablo_update(int8_t xi0) {
 
-    pablo_histogram[pablo_tid][pablo_rid][xi0 + 128]++;   // apply offset to save into the positive values
+    pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;   // apply offset to save into the positive values
 
-    if (xi0 == 0) {     // PABLO_SEEKED_INT
-        // keep adding occurences
-        pablo_occurrences++;
-    } 
-    else if (pablo_occurrences > 0) {
-        // save number of occurrences observed
-        if (pablo_occurrences > 16) 
-            pablo_occurrences = 16;
-        pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]++;
+    // if (xi0 == 0) {     // PABLO_SEEKED_INT
+    //     // keep adding occurences
+    //     pablo_occurrences++;
+    // } 
+    // else if (pablo_occurrences > 0) {
+    //     // save number of occurrences observed
+    //     if (pablo_occurrences > 16) 
+    //         pablo_occurrences = 16;
+    //     pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]++;
         
-        //fprintf(stderr, "\nPABLO gh[%d]: %lu\n", pablo_occurrences - 1, pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]);
+    //     //fprintf(stderr, "\nPABLO gh[%d]: %lu\n", pablo_occurrences - 1, pablo_grouping_hist[pablo_tid][pablo_rid][pablo_occurrences - 1]);
 
-        pablo_occurrences = 0;
-    }
+    //     pablo_occurrences = 0;
+    // }
 }
 
 
@@ -152,33 +155,40 @@ void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict 
 
 void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int k) {
 
-    pablo_occurrences = 0; 
+    quantize_row_q8_0_reference(x, y, k);
 
-    // TEMPORAL:
-    //int [PABLO_NUM_HIST] = {0};
-    int next_id = 0;
+    // encode
+    int encoding_table[16] = {
+        999,
+        -128,
+        -96,
+        -64,
+        -32,
+        -16,
+        -8,
+        -4,
+        -2,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        96
+    };
 
-    // quantize_row_q8_0_reference
-    assert(k % QK8_0 == 0);
     const int nb = k / QK8_0;
 
     for (int i = 0; i < nb; i++) {
-        float amax = 0.0f; // absolute max
-
-        for (int j = 0; j < QK8_0; j++) {
-            const float v = x[i*QK8_0 + j];
-            amax = MAX(amax, fabsf(v));
-        }
-
-        const float d = amax / ((1 << 7) - 1);
-        const float id = d ? 1.0f/d : 0.0f;
-
-        y[i].d = GGML_FP32_TO_FP16(d);
-
         for (int j = 0; j < QK8_0; ++j) {
-            const float x0 = x[i*QK8_0 + j]*id;
 
-            int8_t xi0 = roundf(x0);
+            int8_t xi0;
+            for (int p = 0; p < 16; p++) {
+                
+                if (y[i].qs[j] >= encoding_table[p]) {
+                    xi0 = p - 8;
+                }
+            }
 
             y[i].qs[j] = xi0;
 
