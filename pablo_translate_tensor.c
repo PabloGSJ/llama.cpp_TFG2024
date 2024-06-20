@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     size_t s = MAX_STRING;
 
     FILE *fin = fopen(fin_name, "rb");
-    FILE *fout = fopen(fout_name, "wb");
+    FILE *fout = fopen(fout_name, "w");
 
     while(s >= MAX_STRING) {
         
