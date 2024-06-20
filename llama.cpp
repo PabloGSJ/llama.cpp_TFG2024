@@ -11484,7 +11484,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         gguf_add_tensor(ctx_out, meta);
     }
 
-    std::ofstream fout(fname_out, std::ios::binary);
+    std::ofstream fout(fname_out, std::ios::out);   // PABLO: std::ios::binary -> std::ios::out
     fout.exceptions(std::ofstream::failbit); // fail fast on write errors
 
     const size_t meta_size = gguf_get_meta_size(ctx_out);
