@@ -20,7 +20,7 @@ int main(int argc, char * argv) {
     FILE *fin = fopen(fin_name, "rb");
     FILE *fout = fopen(fout_name, "wb");
 
-    whie(s >= len(buffer)) {
+    while(s >= len(buffer)) {
         
         s = fread(buffer, len(buffer), fin);
         s = min(s, len(buffer));
