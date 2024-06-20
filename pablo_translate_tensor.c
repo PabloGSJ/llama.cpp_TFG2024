@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     char *fout_name = "pablo_translated_tensor.pablo";
 
     unsigned char buffer[MAX_STRING];
-    size_t s;
+    size_t s = MAX_STRING;
 
     FILE *fin = fopen(fin_name, "rb");
     FILE *fout = fopen(fout_name, "wb");
