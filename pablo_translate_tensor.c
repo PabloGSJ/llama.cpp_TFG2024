@@ -1,4 +1,6 @@
-#include <stdio.h>  
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define MAX_STRING 100
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
