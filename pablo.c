@@ -159,22 +159,22 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
 
     // encode
     int encoding_table[16] = {
-        999,
-        -128,
-        -96,
-        -64,
-        -32,
-        -16,
-        -8,
-        -4,
+        -65,
+        -33,
+        -17,
+        -9,
+        -5,
+        -3,
         -2,
-        2,
-        4,
-        8,
-        16,
-        32,
-        64,
-        96
+        -1,
+        0,
+        1,
+        3,
+        7,
+        15,
+        31,
+        63,
+        127
     };
 
     const int nb = k / QK8_0;
@@ -185,7 +185,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
             int8_t xi0;
             for (int p = 0; p < 16; p++) {
                 
-                if (y[i].qs[j] >= encoding_table[p]) {
+                if (y[i].qs[j] <= encoding_table[p]) {
                     xi0 = p - 8;
                 }
             }
