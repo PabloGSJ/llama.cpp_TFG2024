@@ -750,6 +750,10 @@ void quantize_row_q8_0_reference(const float * restrict x, block_q8_0 * restrict
             const float x0 = x[i*QK8_0 + j]*id;
 
             y[i].qs[j] = roundf(x0);
+
+            // PABLO: tmp
+            int8_t xi0 = roundf(x0);
+            pablo_update(xi0);
         }
     }
 }

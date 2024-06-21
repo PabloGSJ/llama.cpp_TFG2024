@@ -19801,6 +19801,10 @@ void ggml_quantize_free(void) {
 }
 
 // PABLO:
+void pablo_init_ggml() {
+    pablo_init();
+}
+
 void pablo_print_all_ggml() {
     pablo_print_all();
 }

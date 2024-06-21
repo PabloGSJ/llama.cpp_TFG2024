@@ -11441,6 +11441,9 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
     gguf_set_val_u32(ctx_out, "general.quantization_version", GGML_QNT_VERSION);
     gguf_set_val_u32(ctx_out, "general.file_type", ftype);
 
+    // PABLO: initialize pablo data
+    pablo_init_ggml();
+
     for (int i = 0; i < ml.n_tensors; ++i) {
         struct ggml_tensor * meta = ml.get_tensor_meta(i);
 

@@ -27,9 +27,6 @@
 #define PABLO_NUM_ROWS          4096    // 4096
 #define PABLO_NUM_HIST          16
 
-#define PABLO_MAX_GROUPING      16
-#define PABLO_SEEKED_INT        0
-
 // Control which quantization-dequantization will be used
 #define PABLO_PRECISION_QUANTIZATION
 
@@ -41,6 +38,9 @@ extern int pablo_rid;   // active row id
 extern int pablo_occurrences;   // occurrence counter for pablo_grouping_hist
 
 // FUNCTIONS
+void pablo_init(void);
+
+
 // Print pablo data
 void pablo_print_all(void);
 void pablo_print_row(void);

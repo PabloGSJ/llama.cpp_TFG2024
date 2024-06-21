@@ -2177,6 +2177,7 @@ extern "C" {
     GGML_API void ggml_quantize_free(void);
 
     // PABLO: print the histogram gatherings
+    void pablo_init_ggml();
     void pablo_print_all_ggml();
 
     // TODO: these would probably get removed in favor of the more general ggml_quantize_chunk

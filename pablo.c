@@ -5,20 +5,20 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
+// pablo variables:
+enum _pablo_mode {PABLO_256} pablo_mode;
+
 // Initialize pablo.h variables
 int pablo_tid = 0;
 int pablo_rid = 0;
 unsigned pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
 
-long unsigned pablo_grouping_hist[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_MAX_GROUPING] = {0};
-int pablo_occurrences = 0;
-
 // Local variables
 
 
 // initialize pablo data
-void pablo_init() {
-
+void pablo_init(void) {
+    
 }
 
 // out all pablo data gathered
@@ -125,7 +125,7 @@ void pablo_print_tensor() {
 // update pablo data
 void pablo_update(int8_t xi0) {
 
-    pablo_histogram[pablo_tid][pablo_rid][xi0 + 8]++;   // apply offset to save into the positive values
+    pablo_histogram[pablo_tid][pablo_rid][xi0 + 128]++;   // apply offset to save into the positive values
 
     // if (xi0 == 0) {     // PABLO_SEEKED_INT
     //     // keep adding occurences
@@ -149,7 +149,8 @@ void pablo_update(int8_t xi0) {
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
     
     #ifdef PABLO_PRECISION_QUANTIZATION
-        pablo_quantize_row(x, y, k);
+        //pablo_quantize_row(x, y, k);
+        quantize_row_q8_0_reference(x, y, k);
     #endif
 
     #ifndef PABLO_PRECISION_QUANTIZATION
