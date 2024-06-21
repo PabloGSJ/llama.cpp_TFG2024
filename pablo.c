@@ -202,50 +202,50 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     }
 }
 
-void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
+// void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
 
-    pablo_occurrences = 0;
-    static const int qk = QK4_0;
+//     pablo_occurrences = 0;
+//     static const int qk = QK4_0;
 
-    assert(k % qk == 0);
+//     assert(k % qk == 0);
 
-    const int nb = k / qk;
+//     const int nb = k / qk;
 
-    // i loop:
-    for (int i = 0; i < nb; i++) {  
-        float amax = 0.0f; // absolute max
-        float max  = 0.0f;
+//     // i loop:
+//     for (int i = 0; i < nb; i++) {  
+//         float amax = 0.0f; // absolute max
+//         float max  = 0.0f;
 
-        // j 1 loop:
-        for (int j = 0; j < qk; j++) {
+//         // j 1 loop:
+//         for (int j = 0; j < qk; j++) {
 
-            const float v = x[i*qk + j];
-            if (amax < fabsf(v)) {
-                amax = fabsf(v);
-                max  = v;
-            }
-        }
+//             const float v = x[i*qk + j];
+//             if (amax < fabsf(v)) {
+//                 amax = fabsf(v);
+//                 max  = v;
+//             }
+//         }
 
-        const float d  = max / -8;
-        const float id = d ? 1.0f/d : 0.0f;
+//         const float d  = max / -8;
+//         const float id = d ? 1.0f/d : 0.0f;
 
-        y[i].d = GGML_FP32_TO_FP16(d);
+//         y[i].d = GGML_FP32_TO_FP16(d);
 
-        // j 2 loop:
-        for (int j = 0; j < qk; j++) {
+//         // j 2 loop:
+//         for (int j = 0; j < qk; j++) {
 
-            const float x0 = x[i*qk + 0 + j]*id;
+//             const float x0 = x[i*qk + 0 + j]*id;
 
-            int8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8;
-            if (xi0 <= 2 && xi0 >= -2)
-                xi0 = 0;
+//             int8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8;
+//             if (xi0 <= 2 && xi0 >= -2)
+//                 xi0 = 0;
 
-            y[i].qs[j]  = xi0;
+//             y[i].qs[j]  = xi0;
 
-            pablo_update(xi0);
-        }
-    }
-}
+//             pablo_update(xi0);
+//         }
+//     }
+// }
 
 // Dequantization functions
 void pablo_dequantize_row_assign(const block_q4_0 * restrict x, float * restrict y, int k) {
