@@ -202,7 +202,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     }
 }
 
-// void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
+void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
 
 //     pablo_occurrences = 0;
 //     static const int qk = QK4_0;
@@ -245,7 +245,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
 //             pablo_update(xi0);
 //         }
 //     }
-// }
+}
 
 // Dequantization functions
 void pablo_dequantize_row_assign(const block_q4_0 * restrict x, float * restrict y, int k) {
