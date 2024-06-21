@@ -1,6 +1,7 @@
 #include "pablo.h"
 #include <stdio.h>
 
+#define PABLO_FILE_NAME "pablo_results.json"
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -21,15 +22,18 @@ void pablo_init() {
 }
 
 // out all pablo data gathered
-void pablo_print_all(void) {    // formato json
+void pablo_print_all(void) {    // json format
     #ifdef _PABLO_PRINT_ALL
-        printf("{\"pablo\":{");
+            
+        FILE *pablo_file = fopen(PABLO_FILE_NAME, "w+");
+
+        fprintf(pablo_file, "{\"pablo\":{");
 
         // print tensor histogram
-        printf("\"tensors\":[");
+        fprintf(pablo_file, "\"tensors\":[");
 
         for (int t = 0; t < PABLO_NUM_TENSORS-1; t++) {
-            printf("{\"tensor\":[");
+            fprintf(pablo_file, "{\"tensor\":[");
 
             // add all rows in the tensor
             unsigned sum[PABLO_NUM_HIST] = {0};
@@ -41,9 +45,9 @@ void pablo_print_all(void) {    // formato json
             }
 
             for (int h = 0; h < PABLO_NUM_HIST; h++) {
-                printf("%u, ", sum[h]);
+                fprintf(pablo_file, "%u, ", sum[h]);
             }
-            printf("\b\b]}, ");
+            fprintf(pablo_file, "\b\b]}, ");
         }
 /*      printf("\b\b], ");
 
@@ -81,9 +85,9 @@ void pablo_print_all(void) {    // formato json
             }
             printf("\b\b]}, ");
         }
-*/      printf("\b\b]");
+*/      fprintf(pablo_file, "\b\b]");
 
-        printf("}}\n\n");
+        fprintf(pablo_file, "}}\n\n");
     #endif /* _PABLO_PRINT_ALL  */
 }
 
