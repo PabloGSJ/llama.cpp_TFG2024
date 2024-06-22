@@ -35,17 +35,14 @@ void pablo_print_all(void) {    // json format
         for (int t = 0; t < PABLO_NUM_TENSORS-1; t++) {
             fprintf(pablo_file, "{\"tensor\":[");
 
-            // add all rows in the tensor
-            unsigned sum[PABLO_NUM_HIST] = {0};
             for (int r = 0; r < PABLO_NUM_ROWS; r++)  {
+                fprintf(pablo_file, "{\"row\":[");
 
                 for (int h = 0; h < PABLO_NUM_HIST; h++) {
-                    sum[h] += pablo_histogram[t][r][h];
-                }
-            }
 
-            for (int h = 0; h < PABLO_NUM_HIST; h++) {
-                fprintf(pablo_file, "%u, ", sum[h]);
+                    fprintf(pablo_file, "%u, ", pablo_histogram[t][r][h]);
+                }
+                fprintf(pablo_file, "\b\b]}, ");
             }
             fprintf(pablo_file, "\b\b]}, ");
         }
@@ -88,6 +85,8 @@ void pablo_print_all(void) {    // json format
 */      fprintf(pablo_file, "\b\b]");
 
         fprintf(pablo_file, "}}\n\n");
+
+        fclose(pablo_file);
     #endif /* _PABLO_PRINT_ALL  */
 }
 
