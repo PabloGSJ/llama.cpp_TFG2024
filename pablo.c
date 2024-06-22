@@ -27,24 +27,24 @@ void pablo_print_all(void) {    // json format
             
         FILE *pablo_file = fopen(PABLO_FILE_NAME, "w+");
 
-        fprintf(pablo_file, "{\"pablo\":{");
+        fprintf(stdout, "{\"pablo\":{");
 
         // print tensor histogram
-        fprintf(pablo_file, "\"tensors\":[");
+        fprintf(stdout, "\"tensors\":[");
 
         for (int t = 0; t < PABLO_NUM_TENSORS-1; t++) {
-            fprintf(pablo_file, "{\"tensor\":[");
+            fprintf(stdout, "{\"tensor\":[");
 
             for (int r = 0; r < PABLO_NUM_ROWS; r++)  {
-                fprintf(pablo_file, "{\"row\":[");
+                fprintf(stdout, "{\"row\":[");
 
                 for (int h = 0; h < PABLO_NUM_HIST; h++) {
 
-                    fprintf(pablo_file, "%u, ", pablo_histogram[t][r][h]);
+                    fprintf(stdout, "%u, ", pablo_histogram[t][r][h]);
                 }
-                fprintf(pablo_file, "\b\b]}, ");
+                fprintf(stdout, "\b\b]}, ");
             }
-            fprintf(pablo_file, "\b\b]}, ");
+            fprintf(stdout, "\b\b]}, ");
         }
 /*      printf("\b\b], ");
 
@@ -82,9 +82,9 @@ void pablo_print_all(void) {    // json format
             }
             printf("\b\b]}, ");
         }
-*/      fprintf(pablo_file, "\b\b]");
+*/      fprintf(stdout, "\b\b]");
 
-        fprintf(pablo_file, "}}\n\n");
+        fprintf(stdout, "}}\n\n");
 
         fclose(pablo_file);
     #endif /* _PABLO_PRINT_ALL  */
