@@ -35,8 +35,71 @@ void pablo_print_all(void) {    // json format
         for (int t = 0; t < PABLO_NUM_TENSORS-2; t++) {
             fprintf(stdout, "{\"tensor\":[");
 
+            unsigned int sum[PABLO_NUM_HIST] = {0};
+
+            // add all rows of the tensor
+            for (int r = 0; r < PABLO_NUM_ROWS; r++)  {
+                for (int h = 0; h < PABLO_NUM_HIST; h++) {
+
+                    sum[h] += pablo_histogram[t][r][h];
+                }
+            }
+
+            // print sumatories
+            for (int h = 0; h < PABLO_NUM_HIST-1; h++) {
+
+                fprintf(stdout, "%u, ", sum[h]);
+            }
+            // last sumatory
+            fprintf(stdout, "%u", sum[PABLO_NUM_HIST-1]);
+
+            fprintf(stdout, "]}, ");
+        }
+        // last tensor
+        fprintf(stdout, "{\"tensor\":[");
+
+        unsigned int sum[PABLO_NUM_HIST] = {0};
+
+        // add all rows of the tensor
+        for (int r = 0; r < PABLO_NUM_ROWS; r++)  {
+            for (int h = 0; h < PABLO_NUM_HIST; h++) {
+
+                sum[h] += pablo_histogram[PABLO_NUM_TENSORS-2][r][h];
+            }
+        }
+
+        // print sumatories
+        for (int h = 0; h < PABLO_NUM_HIST-1; h++) {
+
+            fprintf(stdout, "%u, ", sum[h]);
+        }
+        // last sumatory
+        fprintf(stdout, "%u", sum[PABLO_NUM_HIST-1]);
+
+        fprintf(stdout, "]}");
+
+        fprintf(stdout, "]");
+        fprintf(stdout, "}}\n\n");
+
+        fclose(pablo_file);
+    #endif /* _PABLO_PRINT_ALL  */
+}
+
+void old_pablo_print_all(void) {    // json format
+    #ifdef _PABLO_PRINT_ALL
+            
+        FILE *pablo_file = fopen(PABLO_FILE_NAME, "w+");
+
+        fprintf(stdout, "{\"pablo\":{");
+
+        // print tensor histogram
+        fprintf(stdout, "\"tensors\":[");
+
+        for (int t = 0; t < PABLO_NUM_TENSORS-2; t++) {
+            fprintf(stdout, "{\"tensor\":[");
+
             for (int r = 0; r < PABLO_NUM_ROWS-1; r++)  {
-                fprintf(stdout, "{\"row\":[");
+                //fprintf(stdout, "{\"row\":[");
 
                 for (int h = 0; h < PABLO_NUM_HIST-1; h++) {
 
