@@ -32,20 +32,56 @@ void pablo_print_all(void) {    // json format
         // print tensor histogram
         fprintf(stdout, "\"tensors\":[");
 
-        for (int t = 0; t < PABLO_NUM_TENSORS-1; t++) {
+        for (int t = 0; t < PABLO_NUM_TENSORS-2; t++) {
             fprintf(stdout, "{\"tensor\":[");
 
-            for (int r = 0; r < PABLO_NUM_ROWS; r++)  {
+            for (int r = 0; r < PABLO_NUM_ROWS-1; r++)  {
                 fprintf(stdout, "{\"row\":[");
 
-                for (int h = 0; h < PABLO_NUM_HIST; h++) {
+                for (int h = 0; h < PABLO_NUM_HIST-1; h++) {
 
                     fprintf(stdout, "%u, ", pablo_histogram[t][r][h]);
                 }
-                fprintf(stdout, "\b\b]}, ");
+                fprintf(stdout, "%u", pablo_histogram[t][r][PABLO_NUM_HIST-1]);
+                fprintf(stdout, "]}, ");
             }
-            fprintf(stdout, "\b\b]}, ");
+            // last row
+            fprintf(stdout, "{\"row\":[");
+
+            for (int h = 0; h < PABLO_NUM_HIST-1; h++) {
+
+                fprintf(stdout, "%u, ", pablo_histogram[t][PABLO_NUM_ROWS-1][h]);
+            }
+            fprintf(stdout, "%u", pablo_histogram[t][PABLO_NUM_ROWS-1][PABLO_NUM_HIST-1]);
+            fprintf(stdout, "]}");
+
+            fprintf(stdout, "]}, ");
         }
+        // last tensor
+        fprintf(stdout, "{\"tensor\":[");
+
+            for (int r = 0; r < PABLO_NUM_ROWS-1; r++)  {
+                fprintf(stdout, "{\"row\":[");
+
+                for (int h = 0; h < PABLO_NUM_HIST-1; h++) {
+
+                    fprintf(stdout, "%u, ", pablo_histogram[PABLO_NUM_TENSORS-2][r][h]);
+                }
+                fprintf(stdout, "%u", pablo_histogram[PABLO_NUM_TENSORS-2][r][PABLO_NUM_HIST-1]);
+                fprintf(stdout, "]}, ");
+            }
+            // last row
+            fprintf(stdout, "{\"row\":[");
+
+            for (int h = 0; h < PABLO_NUM_HIST-1; h++) {
+
+                fprintf(stdout, "%u, ", pablo_histogram[PABLO_NUM_TENSORS-2][PABLO_NUM_ROWS-1][h]);
+            }
+            fprintf(stdout, "%u", pablo_histogram[PABLO_NUM_TENSORS-2][PABLO_NUM_ROWS-1][PABLO_NUM_HIST-1]);
+            fprintf(stdout, "]}");
+
+            fprintf(stdout, "]}");
+
 /*      printf("\b\b], ");
 
         // print grouping histogram
@@ -82,7 +118,7 @@ void pablo_print_all(void) {    // json format
             }
             printf("\b\b]}, ");
         }
-*/      fprintf(stdout, "\b\b]");
+*/      fprintf(stdout, "]");
 
         fprintf(stdout, "}}\n\n");
 
