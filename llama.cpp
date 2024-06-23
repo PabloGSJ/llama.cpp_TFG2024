@@ -11643,7 +11643,9 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
     }
 
     // PABLO:
+    printf("pablo checkpoint 1\n");
     pablo_print_all_ggml();
+    printf("pablo checkpoint 2\n");
 
     // go back to beginning of file and write the updated meta data
     {
