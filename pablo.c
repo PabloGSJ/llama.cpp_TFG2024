@@ -32,7 +32,7 @@ void pablo_print_all(void) {    // json format
         // print tensor histogram
         fprintf(stdout, "\"tensors\":[");
 
-        for (int t = 0; t < PABLO_NUM_TENSORS-2; t++) {
+        for (int t = 287; t < PABLO_NUM_TENSORS-2; t++) {
             fprintf(stdout, "{\"tensor\":[");
 
             unsigned int sum[PABLO_NUM_HIST] = {0};
