@@ -25,7 +25,7 @@
 
 #define PABLO_NUM_TENSORS       291     // 291
 #define PABLO_NUM_ROWS          4096    // 4096
-#define PABLO_NUM_HIST          16
+#define PABLO_NUM_HIST          256
 
 // Control which quantization-dequantization will be used
 #define PABLO_PRECISION_QUANTIZATION
