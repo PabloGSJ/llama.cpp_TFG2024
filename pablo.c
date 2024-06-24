@@ -84,6 +84,8 @@ void pablo_print_all(void) {    // json format
         fprintf(stdout, "}}\n\n");
 
         fclose(pablo_file);
+
+        sleep(2);
     #endif /* _PABLO_PRINT_ALL  */
 }
 
