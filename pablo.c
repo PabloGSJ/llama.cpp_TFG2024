@@ -33,6 +33,7 @@ void pablo_print_all(void) {    // json format
         fprintf(stdout, "\"tensors\":[");
 
         for (int t = 0; t < PABLO_NUM_TENSORS-3; t++) {
+            fprintf(stderr, "PABLO: %d\n", t);
             fprintf(stdout, "{\"tensor\":[");
 
             unsigned int sum[PABLO_NUM_HIST] = {0};
@@ -56,6 +57,7 @@ void pablo_print_all(void) {    // json format
             fprintf(stdout, "]}, ");
         }
         // last tensor
+        fprintf(stderr, "PABLO: %d\n", PABLO_NUM_TENSORS-3);
         fprintf(stdout, "{\"tensor\":[");
 
         unsigned int sum[PABLO_NUM_HIST] = {0};
