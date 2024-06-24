@@ -32,7 +32,7 @@ void pablo_print_all(void) {    // json format
         // print tensor histogram
         fprintf(stdout, "\"tensors\":[");
 
-        for (int t = 287; t < PABLO_NUM_TENSORS-2; t++) {
+        for (int t = 0; t < PABLO_NUM_TENSORS-3; t++) {
             fprintf(stdout, "{\"tensor\":[");
 
             unsigned int sum[PABLO_NUM_HIST] = {0};
@@ -64,7 +64,7 @@ void pablo_print_all(void) {    // json format
         for (int r = 0; r < PABLO_NUM_ROWS; r++)  {
             for (int h = 0; h < PABLO_NUM_HIST; h++) {
 
-                sum[h] += pablo_histogram[PABLO_NUM_TENSORS-2][r][h];
+                sum[h] += pablo_histogram[PABLO_NUM_TENSORS-3][r][h];
             }
         }
 
@@ -245,7 +245,7 @@ void pablo_update(int8_t xi0) {
 // pablo_quants
 // Quantization functions
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
-    fprintf(stderr, "\n# PABLO: %d %u\n", pablo_tid, pablo_histogram[pablo_tid][pablo_rid][0]);
+    //fprintf(stderr, "\n# PABLO: %d %u\n", pablo_tid, pablo_histogram[pablo_tid][pablo_rid][0]);
     
     #ifdef PABLO_PRECISION_QUANTIZATION
         //pablo_quantize_row(x, y, k);
