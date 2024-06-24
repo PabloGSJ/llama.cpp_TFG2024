@@ -11511,6 +11511,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         ml.load_data_for(tensor);
 
         pablo_tid = idx;    // PABLO
+        fprintf(stderr, "\n# PABLO: %d\n", pablo_tid);
         LLAMA_LOG_INFO("[%4d/%4d] %36s - [%s], type = %6s, ",
                ++idx, ml.n_tensors,
                ggml_get_name(tensor),
