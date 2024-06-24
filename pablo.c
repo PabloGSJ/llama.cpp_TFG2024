@@ -224,6 +224,7 @@ void pablo_print_tensor() {
 void pablo_update(int8_t xi0) {
 
     pablo_histogram[pablo_tid][pablo_rid][xi0 + 128]++;   // apply offset to save into the positive values
+    fprintf(stderr, "\n# PABLO: %d %u\n", pablo_tid, pablo_histogram[pablo_tid][pablo_rid][xi0 + 128]);
 
     // if (xi0 == 0) {     // PABLO_SEEKED_INT
     //     // keep adding occurences
