@@ -1,5 +1,6 @@
 #include "pablo.h"
 #include <stdio.h>
+#include <assert.h>
 
 #define PABLO_FILE_NAME "pablo_results.json"
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -248,7 +249,9 @@ void pablo_update(int8_t xi0) {
 // pablo_quants
 // Quantization functions
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
-    
+    assert(k % QK8_0 == 0);
+    const int nb = k / QK8_0;
+
     // debug quantization
     for (int i = 0; i < nb; i++) {
         float amax = 0.0f; // absolute max
@@ -259,12 +262,11 @@ void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict 
         }
 
         const float d = amax / ((1 << 7) - 1);
-
         y[i].d = GGML_FP32_TO_FP16(d);
 
         for (int j = 0; j < QK8_0; ++j) {
 
-            y[i].qs[j] = roundf(-1);
+            y[i].qs[j] = roundf(123);
         }
     }
 
