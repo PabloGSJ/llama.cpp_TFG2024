@@ -249,6 +249,8 @@ void pablo_update(int8_t xi0) {
 // pablo_quants
 // Quantization functions
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
+    printf("PABLO: ha entrado\n");
+    
     assert(k % QK8_0 == 0);
     const int nb = k / QK8_0;
 
