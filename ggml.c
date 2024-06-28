@@ -125,8 +125,6 @@ void ggml_print_backtrace(void) {
     backtrace_symbols_fd(trace, nptrs, STDERR_FILENO);
     */
 
-   printf("PABLO: reached alt\n");
-
     // backtrack_symbols does not show line numbers, use gdb instead
     char attach[32];
     snprintf(attach, sizeof(attach), "attach %d", getpid());
@@ -146,7 +144,6 @@ void ggml_print_backtrace(void) {
 #else
 void ggml_print_backtrace(void) {
     // platform not supported
-    printf("PABLO: reached\n");
 }
 #endif
 
@@ -19989,12 +19986,16 @@ size_t ggml_quantize_chunk(enum ggml_type type, const float * src, void * dst, i
     switch (type) {
         case GGML_TYPE_PABLO:
             {
-                GGML_ASSERT(start % QK4_0 == 0);
-                GGML_ASSERT(start % n_per_row == 0);
-                size_t start_row = start / n_per_row;
-                size_t row_size = ggml_row_size(type, n_per_row);
-                result = quantize_pablo(src + start, (char *)dst + start_row * row_size, nrows, n_per_row, hist, imatrix);
-                GGML_ASSERT(result == row_size * nrows);
+                GGML_ASSERT(start % QK8_0 == 0);
+                block_pablo * block = (block_pablo*)dst + start / QK8_0;
+                result = quantize_pablo(src + start, block, n, n, hist);
+
+                // GGML_ASSERT(start % QK4_0 == 0);
+                // GGML_ASSERT(start % n_per_row == 0);
+                // size_t start_row = start / n_per_row;
+                // size_t row_size = ggml_row_size(type, n_per_row);
+                // result = quantize_pablo(src + start, (char *)dst + start_row * row_size, nrows, n_per_row, hist, imatrix);
+                // GGML_ASSERT(result == row_size * nrows);
             } break;
         case GGML_TYPE_Q4_0:
             {
