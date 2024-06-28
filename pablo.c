@@ -85,7 +85,6 @@ void pablo_print_all(void) {    // json format
 
         fclose(pablo_file);
 
-        sleep(2);
     #endif /* _PABLO_PRINT_ALL  */
 }
 
@@ -249,7 +248,26 @@ void pablo_update(int8_t xi0) {
 // pablo_quants
 // Quantization functions
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
-    //fprintf(stderr, "\n# PABLO: %d %u\n", pablo_tid, pablo_histogram[pablo_tid][pablo_rid][0]);
+    
+    // debug quantization
+    for (int i = 0; i < nb; i++) {
+        float amax = 0.0f; // absolute max
+
+        for (int j = 0; j < QK8_0; j++) {
+            const float v = x[i*QK8_0 + j];
+            amax = MAX(amax, fabsf(v));
+        }
+
+        const float d = amax / ((1 << 7) - 1);
+
+        y[i].d = GGML_FP32_TO_FP16(d);
+
+        for (int j = 0; j < QK8_0; ++j) {
+
+            y[i].qs[j] = roundf(-1);
+        }
+    }
+
     
     #ifdef PABLO_PRECISION_QUANTIZATION
         //pablo_quantize_row(x, y, k);

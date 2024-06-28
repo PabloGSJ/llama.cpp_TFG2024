@@ -18,7 +18,7 @@
 // DEBUG
 //#define _PABLO_PRINT_ROW
 //#define _PABLO_PRINT_TENSOR
-#define _PABLO_PRINT_ALL
+//#define _PABLO_PRINT_ALL
 
 #define PABLO_PREFIX    "PABLO"
 #define PABLO_ROW_PREFIX        "PABLO_unistd-row"
