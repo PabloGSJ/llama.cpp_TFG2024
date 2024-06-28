@@ -125,6 +125,8 @@ void ggml_print_backtrace(void) {
     backtrace_symbols_fd(trace, nptrs, STDERR_FILENO);
     */
 
+   printf("PABLO: reached alt\n");
+
     // backtrack_symbols does not show line numbers, use gdb instead
     char attach[32];
     snprintf(attach, sizeof(attach), "attach %d", getpid());

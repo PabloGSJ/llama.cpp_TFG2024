@@ -251,42 +251,42 @@ void pablo_update(int8_t xi0) {
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
     //printf("PABLO: ha entrado\n");
     
-    assert(k % QK8_0 == 0);
-    const int nb = k / QK8_0;
+    // assert(k % QK8_0 == 0);
+    // const int nb = k / QK8_0;
 
-    // debug quantization
-    for (int i = 0; i < nb; i++) {
-        float amax = 0.0f; // absolute max
+    // // debug quantization
+    // for (int i = 0; i < nb; i++) {
+    //     float amax = 0.0f; // absolute max
 
-        for (int j = 0; j < QK8_0; j++) {
-            const float v = x[i*QK8_0 + j];
-            amax = MAX(amax, fabsf(v));
-        }
+    //     for (int j = 0; j < QK8_0; j++) {
+    //         const float v = x[i*QK8_0 + j];
+    //         amax = MAX(amax, fabsf(v));
+    //     }
 
-        const float d = amax / ((1 << 7) - 1);
-        y[i].d = GGML_FP32_TO_FP16(d);
+    //     const float d = amax / ((1 << 7) - 1);
+    //     y[i].d = GGML_FP32_TO_FP16(d);
 
-        for (int j = 0; j < QK8_0; ++j) {
+    //     for (int j = 0; j < QK8_0; ++j) {
 
-            y[i].qs[j] = roundf(123);
-        }
-    }
+    //         y[i].qs[j] = roundf(123);
+    //     }
+    // }
 
-    for (int i = 0; i < nb; i++) {
-        for (int j = 0; j < QK8_0; j++) {
+    // for (int i = 0; i < nb; i++) {
+    //     for (int j = 0; j < QK8_0; j++) {
             
-            if (y[i].qs[j] != 123) {
-                printf("PABLO: Encontrada discrepancia:\n");
-                printf("PABLO: y[%d].qs[%d] = %d", i, j, y[i].qs[j]);
-                exit(-1);
-            }
-        }
-    }
+    //         if (y[i].qs[j] != 123) {
+    //             printf("PABLO: Encontrada discrepancia:\n");
+    //             printf("PABLO: y[%d].qs[%d] = %d", i, j, y[i].qs[j]);
+    //             exit(-1);
+    //         }
+    //     }
+    // }
 
     
     #ifdef PABLO_PRECISION_QUANTIZATION
         //pablo_quantize_row(x, y, k);
-        //quantize_row_q8_0_reference(x, y, k);
+        quantize_row_q8_0_reference(x, y, k);
     #endif
 
     #ifndef PABLO_PRECISION_QUANTIZATION
