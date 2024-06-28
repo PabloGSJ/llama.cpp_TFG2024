@@ -14,7 +14,7 @@ typedef struct {
     ggml_fp16_t d;          // delta
     int8_t qs[PABLO];       // quants
 } block_pablo;
-static_assert(sizeof(block_pablo) == sizeof(ggml_fp16_t) + PABLO / 2, "wrong PABLO block size/padding");
+static_assert(sizeof(block_pablo) == sizeof(ggml_fp16_t) + PABLO, "wrong PABLO block size/padding");
 
 #define QK4_0 32
 typedef struct {
