@@ -270,10 +270,20 @@ void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict 
         }
     }
 
+    for (int i = 0; i < nb; i++) {
+        for (int j = 0; j < QK8_0; j++) {
+            
+            if (y[i].q[j] != 123) {
+                printf("PABLO: Encontrada discrepancia");
+                exit(-1);
+            }
+        }
+    }
+
     
     #ifdef PABLO_PRECISION_QUANTIZATION
         //pablo_quantize_row(x, y, k);
-        quantize_row_q8_0_reference(x, y, k);
+        //quantize_row_q8_0_reference(x, y, k);
     #endif
 
     #ifndef PABLO_PRECISION_QUANTIZATION
