@@ -144,6 +144,7 @@ void ggml_print_backtrace(void) {
 #else
 void ggml_print_backtrace(void) {
     // platform not supported
+    printf("PABLO: reached\n");
 }
 #endif
 
