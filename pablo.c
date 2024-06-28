@@ -384,7 +384,7 @@ void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restri
 }
 
 // Dequantization functions
-void pablo_dequantize_row_assign(const block_q4_0 * restrict x, float * restrict y, int k) {
+void pablo_dequantize_row_assign(const block_pablo * restrict x, float * restrict y, int k) {
     
     // debug
     printf("PABLO: alcanzado pablo_dequantize");
@@ -398,9 +398,9 @@ void pablo_dequantize_row_assign(const block_q4_0 * restrict x, float * restrict
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < qk; ++j) {
             
-            if (y[i].qs[j] != 123) {
+            if (x[i].qs[j] != 123) {
                 printf("PABLO: Encontrada discrepancia:\n");
-                printf("PABLO: y[%d].qs[%d] = %d", i, j, y[i].qs[j]);
+                printf("PABLO: x[%d].qs[%d] = %d", i, j, x[i].qs[j]);
                 exit(-1);
             }
         }
@@ -417,7 +417,7 @@ void pablo_dequantize_row_assign(const block_q4_0 * restrict x, float * restrict
     #endif
 }
 
-void pablo_dequantize_row(const block_q4_0 * restrict x, float * restrict y, int k) {
+void pablo_dequantize_row(const block_pablo * restrict x, float * restrict y, int k) {
     static const int qk = QK8_0;
 
     assert(k % qk == 0);
