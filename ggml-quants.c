@@ -1202,8 +1202,7 @@ void quantize_row_q8_1(const float * restrict x, void * restrict vy, int k) {
 
 // PABLO:
 void dequantize_row_pablo(const block_q4_0 * restrict x, float * restrict y, int k) {
-    //pablo_dequantize_row_assign(x, y, k);
-    printf("HA FUNCIONADO!!!\n");
+    pablo_dequantize_row_assign(x, y, k);
     exit(0);
 }
 
