@@ -19988,7 +19988,7 @@ size_t ggml_quantize_chunk(enum ggml_type type, const float * src, void * dst, i
             {
                 GGML_ASSERT(start % QK8_0 == 0);
                 block_pablo * block = (block_pablo*)dst + start / QK8_0;
-                result = quantize_pablo(src + start, block, n, n, hist);
+                result = ggml_quantize_pablo(src + start, block, n, n, hist);
 
                 // GGML_ASSERT(start % QK4_0 == 0);
                 // GGML_ASSERT(start % n_per_row == 0);
