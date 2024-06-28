@@ -386,8 +386,30 @@ void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restri
 // Dequantization functions
 void pablo_dequantize_row_assign(const block_q4_0 * restrict x, float * restrict y, int k) {
     
+    // debug
+    printf("PABLO: alcanzado pablo_dequantize");
+
+    static const int qk = QK8_0;
+
+    assert(k % qk == 0);
+
+    const int nb = k / qk;
+
+    for (int i = 0; i < nb; i++) {
+        for (int j = 0; j < qk; ++j) {
+            
+            if (y[i].qs[j] != 123) {
+                printf("PABLO: Encontrada discrepancia:\n");
+                printf("PABLO: y[%d].qs[%d] = %d", i, j, y[i].qs[j]);
+                exit(-1);
+            }
+        }
+    }
+    printf("PABLO: exito al comprobar!\n");
+    exit(0);
+
     #ifdef PABLO_PRECISION_QUANTIZATION
-        pablo_dequantize_row(x, y, k);
+        //pablo_dequantize_row(x, y, k);
     #endif
 
     #ifndef PABLO_PRECISION_QUANTIZATION
@@ -396,7 +418,7 @@ void pablo_dequantize_row_assign(const block_q4_0 * restrict x, float * restrict
 }
 
 void pablo_dequantize_row(const block_q4_0 * restrict x, float * restrict y, int k) {
-    static const int qk = QK4_0;
+    static const int qk = QK8_0;
 
     assert(k % qk == 0);
 
@@ -405,12 +427,8 @@ void pablo_dequantize_row(const block_q4_0 * restrict x, float * restrict y, int
     for (int i = 0; i < nb; i++) {
         const float d = GGML_FP16_TO_FP32(x[i].d);
 
-        for (int j = 0; j < qk/2; ++j) {
-            const int x0 = (x[i].qs[j] & 0x0F) - 8;
-            const int x1 = (x[i].qs[j] >>   4) - 8;
-
-            y[i*qk + j + 0   ] = x0*d;
-            y[i*qk + j + qk/2] = x1*d;
+        for (int j = 0; j < qk; ++j) {
+            y[i*qk + j] = x[i].qs[j]*d;
         }
     }
 }
