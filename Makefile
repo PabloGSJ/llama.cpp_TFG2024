@@ -14,7 +14,7 @@ TEST_TARGETS = \
 # Code coverage output files
 COV_TARGETS = *.gcno tests/*.gcno *.gcda tests/*.gcda *.gcov tests/*.gcov lcov-report gcovr-report
 
-LLAMA_DEBUG
+LLAMA_DEBUG = 1
 
 ifndef UNAME_S
 UNAME_S := $(shell uname -s)
