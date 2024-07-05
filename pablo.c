@@ -177,6 +177,7 @@ void pablo_update(int8_t xi0) {
  * Select the appropriate pablo-quantization function according to the operation mode
  */
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
+    fprintf(stderr, "\n\nPABLO: Entered pablo_quantize_row_assign\n");
 
     #ifdef _PABLO_PRECISION_QUANTIZATION
         pablo_quantize_row(x, y, k);
@@ -191,6 +192,7 @@ void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict 
  */
 void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int k) {
 
+    fprintf(stderr, "PABLO: Entered pablo_quantize_row\n");
     // fully quantize to q8_0
     quantize_row_q8_0_reference(x, y, k);
 
@@ -198,9 +200,10 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     assert(k % QK8_0 == 0);
     const int nb = k / QK8_0;
 
+    fprintf(stderr, "PABLO: Going to translate\n");
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < QK8_0; ++j) {
-            fprintf("\n\nPABLO: Going to access encoding_table[%d]\n\n", y[i].qs[j] + ENCODING_OFFSET);
+            fprintf(stderr, "PABLO: Going to access encoding_table[%d]\n\n", y[i].qs[j] + ENCODING_OFFSET);
             y[i].qs[j] = encoding_table[y[i].qs[j] + ENCODING_OFFSET];
 
             pablo_update(y[i].qs[j]);
