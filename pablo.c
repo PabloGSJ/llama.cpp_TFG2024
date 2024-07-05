@@ -58,6 +58,8 @@ int decoding_table[16] = {
 // histogram declaration
 unsigned pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
 
+int pablo_rid = 0;
+int pablo_tid = 0;
 
 // ##### FUNCTIONS ################################################################################################
 // --- Local function definitions:
@@ -72,9 +74,6 @@ void pablo_dequantize_debug(const block_pablo * restrict x, float * restrict y, 
  */
 void pablo_init(void) {
     // Initialize pablo.h variables
-    pablo_tid = 0;
-    pablo_rid = 0;
-
     fprintf(stderr, "\n\nPABLO got executed!\n\n");
 }
 
