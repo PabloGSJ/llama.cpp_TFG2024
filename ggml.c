@@ -19811,32 +19811,27 @@ void pablo_print_all_ggml() {
 }
 
 size_t ggml_quantize_pablo(const float * src, void * dst, int n, int k, int64_t * hist) {
-    assert(k % QK4_0 == 0);
-    const int nb = k / QK4_0;
+    assert(k % PABLO == 0);
+    const int nb = k / PABLO;
 
     for (int b = 0; b < n; b += k) {
-        block_pablo * restrict y = (block_pablo *) dst + b/QK4_0;
+        block_pablo * restrict y = (block_pablo *) dst + b/PABLO;
 
         // PABLO: get the current row id
         pablo_rid = (b / k) - 1;
         
         quantize_row_pablo_reference(src + b, y, k);
 
-        // PABLO: print the current row histogram
-        pablo_print_row();
-
         for (int i = 0; i < nb; i++) {
-            for (int j = 0; j < QK4_0; j += 2) {
-                const uint8_t vi0 = y[i].qs[j/2] & 0x0F;
-                const uint8_t vi1 = y[i].qs[j/2] >> 4;
+            for (int j = 0; j < PABLO; j++) {
+                const int8_t vi = y[i].qs[j];
 
-                hist[vi0]++;
-                hist[vi1]++;
+                hist[vi]++;
             }
         }
     }
 
-    return (n/QK4_0*sizeof(block_q4_0));
+    return (n / PABLO * sizeof(block_pablo));
 }
 
 size_t ggml_quantize_q4_0(const float * src, void * dst, int n, int k, int64_t * hist) {
@@ -19850,9 +19845,6 @@ size_t ggml_quantize_q4_0(const float * src, void * dst, int n, int k, int64_t *
         pablo_rid = (b / k) - 1;
         
         quantize_row_q4_0_reference(src + b, y, k);
-
-        // PABLO: print the current row histogram
-        pablo_print_row();
 
         for (int i = 0; i < nb; i++) {
             for (int j = 0; j < QK4_0; j += 2) {
@@ -19987,8 +19979,8 @@ size_t ggml_quantize_chunk(enum ggml_type type, const float * src, void * dst, i
     switch (type) {
         case GGML_TYPE_PABLO:
             {
-                GGML_ASSERT(start % QK8_0 == 0);
-                block_pablo * block = (block_pablo*)dst + start / QK8_0;
+                GGML_ASSERT(start % PABLO == 0);
+                block_pablo * block = (block_pablo*)dst + start / PABLO;
                 result = ggml_quantize_pablo(src + start, block, n, n, hist);
 
                 // GGML_ASSERT(start % QK4_0 == 0);

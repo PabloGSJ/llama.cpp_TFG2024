@@ -619,7 +619,7 @@ $(info )
 # Build library
 #
 # PABLO:
- pablo.o: pablo.c pablo_quants.c pablo.h
+ pablo.o: pablo.c pablo.h pablo-secret.h
 	$(CC)  $(CFLAGS)   -c $< -o $@ -g 
 
 ggml.o: ggml.c ggml.h ggml-cuda.h pablo.h
