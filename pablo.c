@@ -58,6 +58,9 @@ int decoding_table[16] = {
 // histogram declaration
 unsigned pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST] = {0};
 
+int pablo_tid = 0;
+int pablo_rid = 0;
+
 // ##### FUNCTIONS ################################################################################################
 // --- Local function definitions:
 
