@@ -200,7 +200,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
 
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < QK8_0; ++j) {
-            fprintf("\n\nPABLO: nGoing to access encoding_table[%d]\n\n", y[i].qs[j] + ENCODING_OFFSET);
+            fprintf("\n\nPABLO: Going to access encoding_table[%d]\n\n", y[i].qs[j] + ENCODING_OFFSET);
             y[i].qs[j] = encoding_table[y[i].qs[j] + ENCODING_OFFSET];
 
             pablo_update(y[i].qs[j]);
