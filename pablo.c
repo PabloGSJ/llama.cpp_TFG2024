@@ -203,12 +203,12 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     fprintf(stderr, "PABLO: Going to translate\n");
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < QK8_0; ++j) {
-            fprintf(stderr, "PABLO: Going to access encoding_table[%d]\n\n", y[i].qs[j] + ENCODING_OFFSET);
             y[i].qs[j] = encoding_table[y[i].qs[j] + ENCODING_OFFSET];
 
             pablo_update(y[i].qs[j]);
         }
     }
+    fprintf(stderr, "PABLO: Translation successful\n\n");
 }
 
 void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
