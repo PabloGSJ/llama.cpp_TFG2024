@@ -216,7 +216,7 @@ void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restri
 /**
  * Debug function for various purposes
  */
-void pablo_quantize_debug() {
+void pablo_quantize_debug(const float * restrict x, block_pablo * restrict y, int k) {
     // Prepare tensor for pablo_dequantize_debug
 
     //printf("PABLO: Entered\n");
@@ -281,7 +281,7 @@ void pablo_dequantize_row_imprecise(const block_q4_0 * restrict x, float * restr
 /**
  * Debug function for various purposes
  */
-void pablo_dequantize_debug() {
+void pablo_dequantize_debug(const block_pablo * restrict x, float * restrict y, int k) {
     // check that correct quantized tensors were received 
 
     printf("PABLO: pablo_dequantize_debug reached\n");
