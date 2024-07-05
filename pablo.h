@@ -22,8 +22,8 @@
 
 // VARIABLES
 // pablo identifiers
-int pablo_tid;   // active tensor id
-int pablo_rid;   // active row id
+extern int pablo_tid;   // active tensor id
+extern int pablo_rid;   // active row id
 
 extern int pablo_occurrences;   // occurrence counter for pablo_grouping_hist
 
