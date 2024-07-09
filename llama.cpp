@@ -11632,11 +11632,12 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         total_size_new += new_size;
 
         // update the gguf meta data as we go
+        fprintf(stderr, "\nPABLO: before updating gguf data\n");
         gguf_set_tensor_type(ctx_out, name.c_str(), new_type);
         gguf_set_tensor_data(ctx_out, name.c_str(), new_data, new_size);
 
         // write tensor data + padding
-        fprintf(stderr, "\nPABLO: before writing tensor...\n");
+        fprintf(stderr, "PABLO: before writing tensor...\n");
         fout.write((const char *) new_data, new_size);
         zeros(fout, GGML_PAD(new_size, align) - new_size);
         fprintf(stderr, "\nPABLO: Tensor written, starting next iteration\n");
