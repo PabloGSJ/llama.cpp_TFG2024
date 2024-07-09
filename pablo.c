@@ -235,7 +235,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
 
             y[i].qs[j] = xi0;
 
-            pablo_update(xi0);
+            //pablo_update(xi0);
         }
     }
 }
