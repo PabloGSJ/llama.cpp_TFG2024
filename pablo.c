@@ -14,7 +14,7 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 // translation tables
-int encoding_table[256] = {
+int pablo_encoding_table[256] = {
     -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, 
     -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7,
     -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6,
@@ -34,7 +34,7 @@ int encoding_table[256] = {
 };
 #define ENCODING_OFFSET 128
 
-int decoding_table[16] = {
+int pablo_decoding_table[16] = {
     -128,
     -64,
     -32,
@@ -175,13 +175,8 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     fprintf(stderr, "PABLO: Begining translation...\n");
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
-            int8_t oldyqs = y[i].qs[j];
-            ///fprintf(stderr, "%d -> ", y[i].qs[i]);
-            y[i].qs[j] = encoding_table[y[i].qs[j] + ENCODING_OFFSET];
-            //fprintf(stderr, "%d: encoding_table[%d] = %d\n", y[i].qs[j], oldyqs + ENCODING_OFFSET, encoding_table[oldyqs + ENCODING_OFFSET]);
-            //fprintf(stderr, "%d\n", y[i].qs[j]);
-
-            //pablo_update(y[i].qs[j]);
+            
+            y[i].qs[j] = pablo_encoding_table[y[i].qs[j] + ENCODING_OFFSET];
         }
     }
 
@@ -196,7 +191,6 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
             }
         }
     }
-    
     fprintf(stderr, "PABLO: Translation successful\n\n");
 }
 
