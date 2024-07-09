@@ -17,17 +17,7 @@
 
 
 // DEBUG
-//#define _PABLO_PRINT_ROW
-//#define _PABLO_PRINT_TENSOR
 //#define _PABLO_PRINT_ALL
-
-#define PABLO_PREFIX    "PABLO"
-#define PABLO_ROW_PREFIX        "PABLO_unistd-row"
-#define PABLO_TENSOR_PREFIX     "PABLO_unistd-tensor"
-
-#define PABLO_NUM_TENSORS       291     // 291
-#define PABLO_NUM_ROWS          4096    // 4096
-#define PABLO_NUM_HIST          256
 
 // Control which quantization-dequantization will be used
 #define PABLO_PRECISION_QUANTIZATION
