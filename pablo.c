@@ -155,13 +155,8 @@ void pablo_print_all(void) {    // json format
  */
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
     fprintf(stderr, "\n\nPABLO: Entered pablo_quantize_row_assign\n");
-
-    #ifdef _PABLO_PRECISION_QUANTIZATION
-        pablo_quantize_row(x, y, k);
-    #endif
-    #ifndef _PABLO_PRECISION_QUANTIZATION
-        pablo_quantize_row_imprecise(x, y, k);
-    #endif
+    
+    pablo_quantize_row(x, y, k);
 }
 
 /**
