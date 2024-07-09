@@ -166,7 +166,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
 
     fprintf(stderr, "PABLO: Entered pablo_quantize_row\n");
     // fully quantize to q8_0
-    quantize_row_q8_0_reference(x, (block_q8_0)y, k);
+    quantize_row_q8_0_reference(x, (block_q8_0 * restrict)y, k);
 
     // translate to 16 bit values
     assert(k % PABLO == 0);
