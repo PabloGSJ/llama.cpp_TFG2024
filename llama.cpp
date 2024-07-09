@@ -11448,7 +11448,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         struct ggml_tensor * meta = ml.get_tensor_meta(i);
 
         const std::string name = ggml_get_name(meta);
-        fprintf("\n\nPABLO: name at begining: %s\n\n", name.c_str());
+        fprintf(stderr, "\n\nPABLO: name at begining: %s\n\n", name.c_str());
 
         // TODO: avoid hardcoded tensor names - use the TN_* constants
         if (name.find("attn_v.weight") != std::string::npos || name.find("attn_qkv.weight") != std::string::npos) {
@@ -11634,7 +11634,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         total_size_org += ggml_nbytes(tensor);
         total_size_new += new_size;
 
-        fprintf("\n\nPABLO: name at end: %s\n\n", name.c_str());
+        fprintf(stderr, "\n\nPABLO: name at end: %s\n\n", name.c_str());
 
         // update the gguf meta data as we go
         gguf_set_tensor_type(ctx_out, name.c_str(), new_type);
