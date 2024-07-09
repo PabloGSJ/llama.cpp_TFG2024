@@ -182,7 +182,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
         for (int j = 0; j < QK8_0; ++j) {
             y[i].qs[j] = encoding_table[y[i].qs[j] + ENCODING_OFFSET];
 
-            pablo_update(y[i].qs[j]);
+            //pablo_update(y[i].qs[j]);
         }
     }
     fprintf(stderr, "PABLO: Translation successful\n\n");
