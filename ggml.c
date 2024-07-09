@@ -510,14 +510,14 @@ static const ggml_type_traits_t type_traits[GGML_TYPE_COUNT] = {
     },
     [GGML_TYPE_PABLO] = {
         .type_name                = "pablo",
-        .blck_size                = QK4_0,
+        .blck_size                = PABLO,
         .type_size                = sizeof(block_pablo),
         .is_quantized             = true,
         .to_float                 = (ggml_to_float_t) dequantize_row_pablo,
         .from_float               = quantize_row_pablo,
         .from_float_reference     = (ggml_from_float_t) quantize_row_pablo_reference,
-        .vec_dot                  = ggml_vec_dot_q8_0_q8_0,
-        .vec_dot_type             = GGML_TYPE_Q8_0,
+        .vec_dot                  = ggml_vec_dot_q4_0_q8_0,
+        .vec_dot_type             = GGML_TYPE_PABLO,
 #if defined (__ARM_FEATURE_MATMUL_INT8)
         .nrows                    = 2,
 #else
