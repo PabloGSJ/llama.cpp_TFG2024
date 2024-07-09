@@ -11448,7 +11448,6 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         struct ggml_tensor * meta = ml.get_tensor_meta(i);
 
         const std::string name = ggml_get_name(meta);
-        fprintf(stderr, "\n\nPABLO: name at begining: %s\n\n", name.c_str());
 
         // TODO: avoid hardcoded tensor names - use the TN_* constants
         if (name.find("attn_v.weight") != std::string::npos || name.find("attn_qkv.weight") != std::string::npos) {
@@ -11502,6 +11501,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         struct ggml_tensor * tensor = ml.get_tensor_meta(i);
 
         const std::string name = ggml_get_name(tensor);
+        fprintf(stderr, "\n\nPABLO: name at begining: %s\n\n", name.c_str());
 
         if (!ml.use_mmap) {
             if (read_data.size() < ggml_nbytes(tensor)) {
@@ -11615,6 +11615,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
 
             // PABLO: print the current tensor histogram
             //pablo_print_tensor();
+            fprintf(stderr, "\n\nPABLO: name at end: %s\n\n", name.c_str());
 
             LLAMA_LOG_INFO("size = %8.2f MiB -> %8.2f MiB", ggml_nbytes(tensor)/1024.0/1024.0, new_size/1024.0/1024.0);
             int64_t tot_count = 0;
@@ -11633,8 +11634,6 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         }
         total_size_org += ggml_nbytes(tensor);
         total_size_new += new_size;
-
-        fprintf(stderr, "\n\nPABLO: name at end: %s\n\n", name.c_str());
 
         // update the gguf meta data as we go
         gguf_set_tensor_type(ctx_out, name.c_str(), new_type);
