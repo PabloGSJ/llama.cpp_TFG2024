@@ -11633,7 +11633,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
 
         // update the gguf meta data as we go
         fprintf(stderr, "\nPABLO: before updating gguf data\n");
-        fprintf(stderr, "PABLO: %d\n", ctx_out->data[0]);
+        fprintf(stderr, "PABLO: %d\n", ctx_out.data[0]);
         fprintf(stderr, "PABLO: %s\n", name.c_str());
         fprintf(stderr, "PABLO: %d\n", new_type);
         gguf_set_tensor_type(ctx_out, name.c_str(), new_type);
