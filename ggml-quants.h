@@ -8,7 +8,6 @@
 #include <stddef.h>
 
 // PABLO: todo
-
 #define PABLO 32
 typedef struct {
     ggml_fp16_t d;          // delta

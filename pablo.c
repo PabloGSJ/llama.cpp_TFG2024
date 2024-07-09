@@ -166,16 +166,18 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
 
     fprintf(stderr, "PABLO: Entered pablo_quantize_row\n");
     // fully quantize to q8_0
-    quantize_row_q8_0_reference(x, y, k);
+    quantize_row_q8_0_reference(x, (block_q8_0)y, k);
 
     // translate to 16 bit values
-    assert(k % QK8_0 == 0);
-    const int nb = k / QK8_0;
+    assert(k % PABLO == 0);
+    const int nb = k / PABLO;
 
     fprintf(stderr, "PABLO: Going to translate\n");
     for (int i = 0; i < nb; i++) {
-        for (int j = 0; j < QK8_0; ++j) {
+        for (int j = 0; j < PABLO; ++j) {
+            fprintf(stderr, "%d -> ", y[i].qs[i]);
             y[i].qs[j] = encoding_table[y[i].qs[j] + ENCODING_OFFSET];
+            fprintf(stderr, "%d\n", y[i].qs[i]);
 
             //pablo_update(y[i].qs[j]);
         }
