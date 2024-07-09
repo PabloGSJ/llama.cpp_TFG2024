@@ -11610,8 +11610,10 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
 
             const int nchunk = (nelements + chunk_size - 1)/chunk_size;
             const int nthread_use = nthread > 1 ? std::max(1, std::min(nthread, nchunk)) : 1;
-            // PABLO: this is the function call
             new_size = llama_tensor_quantize_internal(new_type, f32_data, new_data, chunk_size, nrows, n_per_row, hist_cur.data(), imatrix, workers, nthread_use);
+
+            // PABLO: print the current tensor histogram
+            //pablo_print_tensor();
 
             LLAMA_LOG_INFO("size = %8.2f MiB -> %8.2f MiB", ggml_nbytes(tensor)/1024.0/1024.0, new_size/1024.0/1024.0);
             int64_t tot_count = 0;
@@ -11632,20 +11634,12 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         total_size_new += new_size;
 
         // update the gguf meta data as we go
-        fprintf(stderr, "\nPABLO: before updating gguf data\n");
-        fprintf(stderr, "PABLO: %s\n", name.c_str());
-        fprintf(stderr, "PABLO: %d\n", new_type);
-        fprintf(stderr, "PABLO: %p\n", new_data);
-        fprintf(stderr, "PABLO: %d\n", new_size);
         gguf_set_tensor_type(ctx_out, name.c_str(), new_type);
-        fprintf(stderr, "\nPABLO: before updating gguf data\n");
         gguf_set_tensor_data(ctx_out, name.c_str(), new_data, new_size);
 
         // write tensor data + padding
-        fprintf(stderr, "PABLO: before writing tensor...\n");
         fout.write((const char *) new_data, new_size);
         zeros(fout, GGML_PAD(new_size, align) - new_size);
-        fprintf(stderr, "\nPABLO: Tensor written, starting next iteration\n");
     }
 
     // PABLO:
