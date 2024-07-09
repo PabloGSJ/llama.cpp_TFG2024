@@ -178,7 +178,8 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
             int8_t oldyqs = y[i].qs[j];
             fprintf(stderr, "%d -> ", y[i].qs[i]);
             y[i].qs[j] = encoding_table[y[i].qs[j] + ENCODING_OFFSET];
-            fprintf(stderr, "%d: encoding_table[%d] = %d\n", y[i].qs[j], oldyqs + ENCODING_OFFSET, encoding_table[oldyqs + ENCODING_OFFSET]);
+            //fprintf(stderr, "%d: encoding_table[%d] = %d\n", y[i].qs[j], oldyqs + ENCODING_OFFSET, encoding_table[oldyqs + ENCODING_OFFSET]);
+            fprintf(stderr, "%d\n", y[i].qs[j]);
 
             //pablo_update(y[i].qs[j]);
         }
