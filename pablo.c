@@ -172,7 +172,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     assert(k % PABLO == 0);
     const int nb = k / PABLO;
 
-    fprintf(stderr, "PABLO: Going to translate\n");
+    fprintf(stderr, "PABLO: Begining translation...\n");
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
             int8_t oldyqs = y[i].qs[j];
@@ -184,6 +184,19 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
             //pablo_update(y[i].qs[j]);
         }
     }
+
+    // check if quantization is correct  
+    fprintf(stderr, "PABLO: Checking translation...\n");
+    for (int i = 0; i < nb; i++) {
+        for (int j = 0; j < PABLO; ++j) {
+            
+            if (y[i].qs[j] < -8 || y[i].qs[j] >= 8) {
+                // ERROR:
+                fprintf("PABLO ERROR: translation errors detected: y[%d].qs[%d]=%d\n", i, j, y[i].qs[j]);
+            }
+        }
+    }
+    
     fprintf(stderr, "PABLO: Translation successful\n\n");
 }
 
