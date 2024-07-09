@@ -148,10 +148,57 @@ void pablo_print_all(void) {    // json format
     #endif /* _PABLO_PRINT_ALL  */
 }
 
-// pablo_quants
-// Quantization functions
+// ##### Quantization functions ###################################################################################
+
+/**
+ * Select the appropriate pablo-quantization function according to the operation mode
+ */
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
-    //printf("PABLO: ha entrado\n");
+    fprintf(stderr, "\n\nPABLO: Entered pablo_quantize_row_assign\n");
+
+    #ifdef _PABLO_PRECISION_QUANTIZATION
+        pablo_quantize_row(x, y, k);
+    #endif
+    #ifndef _PABLO_PRECISION_QUANTIZATION
+        pablo_quantize_row_imprecise(x, y, k);
+    #endif
+}
+
+/**
+ * Main pablo-quantization function
+ */
+void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int k) {
+
+    fprintf(stderr, "PABLO: Entered pablo_quantize_row\n");
+    // fully quantize to q8_0
+    quantize_row_q8_0_reference(x, y, k);
+
+    // translate to 16 bit values
+    assert(k % QK8_0 == 0);
+    const int nb = k / QK8_0;
+
+    fprintf(stderr, "PABLO: Going to translate\n");
+    for (int i = 0; i < nb; i++) {
+        for (int j = 0; j < QK8_0; ++j) {
+            y[i].qs[j] = encoding_table[y[i].qs[j] + ENCODING_OFFSET];
+
+            pablo_update(y[i].qs[j]);
+        }
+    }
+    fprintf(stderr, "PABLO: Translation successful\n\n");
+}
+
+void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
+    // not implemented
+}
+
+/**
+ * Debug function for various purposes
+ */
+void pablo_quantize_debug(const float * restrict x, block_pablo * restrict y, int k) {
+    // Prepare tensor for pablo_dequantize_debug
+
+    //printf("PABLO: Entered\n");
     
     assert(k % QK8_0 == 0);
     const int nb = k / QK8_0;
@@ -170,120 +217,12 @@ void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict 
 
         for (int j = 0; j < QK8_0; ++j) {
 
-            y[i].qs[j] = roundf(123);
-        }
-    }
-
-    for (int i = 0; i < nb; i++) {
-        for (int j = 0; j < QK8_0; j++) {
-            
-            if (y[i].qs[j] != 123) {
-                printf("PABLO: Encontrada discrepancia:\n");
-                printf("PABLO: y[%d].qs[%d] = %d", i, j, y[i].qs[j]);
-                exit(-1);
-            }
-        }
-    }
-
-    
-    #ifdef PABLO_PRECISION_QUANTIZATION
-        //pablo_quantize_row(x, y, k);
-        // quantize_row_q8_0_reference(x, y, k);
-    #endif
-
-    #ifndef PABLO_PRECISION_QUANTIZATION
-        pablo_quantize_row_imprecise(x, y, k);
-    #endif
-}
-
-void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int k) {
-
-    quantize_row_q8_0_reference(x, y, k);
-
-    // encode
-    int encoding_table[16] = {
-        -65,
-        -33,
-        -17,
-        -9,
-        -5,
-        -3,
-        -2,
-        -1,
-        0,
-        1,
-        3,
-        7,
-        15,
-        31,
-        63,
-        127
-    };
-
-    const int nb = k / QK8_0;
-
-    for (int i = 0; i < nb; i++) {
-        for (int j = 0; j < QK8_0; ++j) {
-
-            int8_t xi0;
-            for (int p = 0; p < 16; p++) {
-                
-                if (y[i].qs[j] <= encoding_table[p]) {
-                    xi0 = p - 8;
-                }
-            }
-
-            y[i].qs[j] = xi0;
-
-            //pablo_update(xi0);
+            y[i].qs[j] = 123;
         }
     }
 }
 
-void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
 
-//     pablo_occurrences = 0;
-//     static const int qk = QK4_0;
-
-//     assert(k % qk == 0);
-
-//     const int nb = k / qk;
-
-//     // i loop:
-//     for (int i = 0; i < nb; i++) {  
-//         float amax = 0.0f; // absolute max
-//         float max  = 0.0f;
-
-//         // j 1 loop:
-//         for (int j = 0; j < qk; j++) {
-
-//             const float v = x[i*qk + j];
-//             if (amax < fabsf(v)) {
-//                 amax = fabsf(v);
-//                 max  = v;
-//             }
-//         }
-
-//         const float d  = max / -8;
-//         const float id = d ? 1.0f/d : 0.0f;
-
-//         y[i].d = GGML_FP32_TO_FP16(d);
-
-//         // j 2 loop:
-//         for (int j = 0; j < qk; j++) {
-
-//             const float x0 = x[i*qk + 0 + j]*id;
-
-//             int8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f)) - 8;
-//             if (xi0 <= 2 && xi0 >= -2)
-//                 xi0 = 0;
-
-//             y[i].qs[j]  = xi0;
-
-//             pablo_update(xi0);
-//         }
-//     }
-}
 
 // Dequantization functions
 void pablo_dequantize_row_assign(const block_pablo * restrict x, float * restrict y, int k) {
