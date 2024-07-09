@@ -177,7 +177,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
         for (int j = 0; j < PABLO; ++j) {
             fprintf(stderr, "%d -> ", y[i].qs[i]);
             y[i].qs[j] = encoding_table[y[i].qs[j] + ENCODING_OFFSET];
-            fprintf(stderr, "encoding_table[%d] = %d\n", y[i].qs[j] + ENCODING_OFFSET, y[i].qs[i]);
+            fprintf(stderr, "%d: encoding_table[%d] = %d\n", y[i].qs[j], y[i].qs[j] + ENCODING_OFFSET, encoding_table[y[i].qs[j] + ENCODING_OFFSET]);
 
             //pablo_update(y[i].qs[j]);
         }
