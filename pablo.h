@@ -29,8 +29,8 @@ extern int pablo_rid;   // active row id
 
 extern int pablo_occurrences;   // occurrence counter for pablo_grouping_hist
 
-extern int pablo_encoding_table[256];
-extern int pablo_decoding_table[16];
+extern int8_t pablo_encoding_table[256];
+extern int8_t pablo_decoding_table[16];
 
 // FUNCTIONS
 void pablo_init(void);

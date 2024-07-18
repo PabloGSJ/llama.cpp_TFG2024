@@ -15,7 +15,7 @@
 
 // translation tables
 #define ENCODING_OFFSET 128
-int pablo_encoding_table[256] = {
+int8_t pablo_encoding_table[256] = {
     -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, 
     -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7,
     -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6,
@@ -35,7 +35,7 @@ int pablo_encoding_table[256] = {
 };
 
 #define DECODING_OFFSET 8
-int pablo_decoding_table[16] = {
+int8_t pablo_decoding_table[16] = {
     -128,
     -64,
     -32,
@@ -155,6 +155,11 @@ void pablo_print_all(void) {    // json format
  */
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
     fprintf(stderr, "\n\nPABLO: Entered pablo_quantize_row_assign\n");
+
+    for (int i = 0; i < 256; i++) {
+        fprintf(stderr, "%d-", pablo_encoding_table[i]);
+    }
+    fprintf("\n");
     
     pablo_quantize_row(x, y, k);
 }
