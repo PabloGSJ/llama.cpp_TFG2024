@@ -186,6 +186,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     fprintf(stderr, "Quantization successful\n");
 
     fprintf(stderr, "PABLO: Begining translation...\n");
+    pablo:
     int tmp;
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
