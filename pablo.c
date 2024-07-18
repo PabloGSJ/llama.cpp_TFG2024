@@ -14,6 +14,7 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 // translation tables
+#define ENCODING_OFFSET 128
 int pablo_encoding_table[256] = {
     -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, 
     -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7,
@@ -32,8 +33,8 @@ int pablo_encoding_table[256] = {
     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 
 };
-#define ENCODING_OFFSET 128
 
+#define DECODING_OFFSET 8
 int pablo_decoding_table[16] = {
     -128,
     -64,
@@ -52,7 +53,6 @@ int pablo_decoding_table[16] = {
     32,
     64
 };
-#define DECODING_OFFSET 8
 
 // Histogram size
 #define PABLO_NUM_TENSORS       291     // 291
@@ -176,7 +176,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
             
-            y[i].qs[j] = pablo_encoding_table[y[i].qs[j] + ENCODING_OFFSET];
+            y[i].qs[j] = 0; //pablo_encoding_table[y[i].qs[j] + ENCODING_OFFSET];
         }
     }
 
