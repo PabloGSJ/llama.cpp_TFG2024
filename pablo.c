@@ -173,10 +173,11 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     const int nb = k / PABLO;
 
     fprintf(stderr, "PABLO: Begining translation...\n");
+    int tmp;
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
-            
-            y[i].qs[j] = pablo_encoding_table[0]; //pablo_encoding_table[y[i].qs[j] + ENCODING_OFFSET];
+            tmp = y[i].qs[j];
+            y[i].qs[j] = pablo_encoding_table[tmp + ENCODING_OFFSET]; //pablo_encoding_table[y[i].qs[j] + ENCODING_OFFSET];
         }
     }
 
