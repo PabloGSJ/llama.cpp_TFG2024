@@ -157,6 +157,7 @@ void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict 
     fprintf(stderr, "\n\nPABLO: Entered pablo_quantize_row_assign\n");
     
     pablo_quantize_row(x, y, k);
+    fprintf(stderr, "PABLO: Exiting pablo_quantize_row_assign\n\n");
 }
 
 /**
@@ -172,39 +173,43 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     assert(k % PABLO == 0);
     const int nb = k / PABLO;
 
-    fprintf(stderr, "PABLO: Checking quantization...\n");
+    fprintf(stderr, "PABLO: Checking quantization... ");
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
             
             if (y[i].qs[j] < -128 || y[i].qs[j] >= 128) {
                 // ERROR:
-                fprintf("PABLO ERROR: quantization errors detected: y[%d].qs[%d]=%d\n", i, j, y[i].qs[j]);
+                fprintf(stderr, "Quantization errors detected: y[%d].qs[%d]=%d\n", i, j, y[i].qs[j]);
             }
         }
     }
-    fprintf(stderr, "PABLO: Quantization successful\n\n");
+    fprintf(stderr, "Quantization successful\n");
 
     fprintf(stderr, "PABLO: Begining translation...\n");
     int tmp;
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
             tmp = y[i].qs[j];
+            if (tmp + ENCODING_OFFSET < 0 || tmp + ENCODING_OFFSET >= 256) {
+                // ERROR:
+                fprintf(stderr, "Translation error detected: y[%d].qs[%d]=%d\n", i, j, y[i].qs[j]);
+            }
             y[i].qs[j] = pablo_encoding_table[tmp + ENCODING_OFFSET]; //pablo_encoding_table[y[i].qs[j] + ENCODING_OFFSET];
         }
     }
 
     // check if quantization is correct  
-    fprintf(stderr, "PABLO: Checking translation...\n");
+    fprintf(stderr, "PABLO: Checking translation... ");
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
             
             if (y[i].qs[j] < -8 || y[i].qs[j] >= 8) {
                 // ERROR:
-                fprintf("PABLO ERROR: translation errors detected: y[%d].qs[%d]=%d\n", i, j, y[i].qs[j]);
+                fprintf(stderr, "Translation errors detected: y[%d].qs[%d]=%d\n", i, j, y[i].qs[j]);
             }
         }
     }
-    fprintf(stderr, "PABLO: Translation successful\n\n");
+    fprintf(stderr, "Translation successful\n");
 }
 
 void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
