@@ -159,7 +159,7 @@ void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict 
     for (int i = 0; i < 256; i++) {
         fprintf(stderr, "%d-", pablo_encoding_table[i]);
     }
-    fprintf("\n");
+    fprintf(stderr, "\n");
     
     pablo_quantize_row(x, y, k);
 }
