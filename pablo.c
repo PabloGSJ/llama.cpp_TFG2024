@@ -176,7 +176,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
             
-            y[i].qs[j] = 0; //pablo_encoding_table[y[i].qs[j] + ENCODING_OFFSET];
+            y[i].qs[j] = pablo_encoding_table[y[i].qs[j] + ENCODING_OFFSET];
         }
     }
 
