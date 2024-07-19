@@ -241,9 +241,9 @@ void pablo_quantize_debug(const float * restrict x, block_pablo * restrict y, in
  * Select the appropriate pablo-dequantization function according to the operation mode
  */
 void pablo_dequantize_row_assign(const block_pablo * restrict x, float * restrict y, int k) {
-    //pablo_dequantize_debug(x, y, k);
-    pablo_dequantize_row(x, y, k);
-    fprintf(stderr, "PABLO: Successful pablo execution\n");
+    pablo_dequantize_debug(x, y, k);
+    //pablo_dequantize_row(x, y, k);
+    //fprintf(stderr, "PABLO: Successful pablo execution\n");
 }
 
 /**
@@ -270,27 +270,14 @@ void pablo_dequantize_row_imprecise(const block_q4_0 * restrict x, float * restr
  * Debug function for various purposes
  */
 void pablo_dequantize_debug(const block_pablo * restrict x, float * restrict y, int k) {
-    // check that correct quantized tensors were received 
-
-    printf("PABLO: pablo_dequantize_debug reached\n");
-
-    static const int qk = QK8_0;
-
-    assert(k % qk == 0);
-
-    const int nb = k / qk;
+    assert(k % PABLO == 0);
+    const int nb = k / PABLO;
 
     for (int i = 0; i < nb; i++) {
-        for (int j = 0; j < qk; ++j) {
-            
-            if (x[i].qs[j] != 123) {
-                printf("PABLO: Found discrepancy:\n");
-                printf("PABLO: x[%d].qs[%d] = %d", i, j, x[i].qs[j]);
-                exit(-1);
-            }
+        for (int j = 0; j < PABLO; ++j) {
+
+            y[i*PABLO + j] = 0; 
         }
     }
-    printf("PABLO: successful check!\n");
-    exit(0);
 
 }
