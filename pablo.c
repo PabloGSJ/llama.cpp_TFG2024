@@ -154,8 +154,8 @@ void pablo_print_all(void) {    // json format
  * Select the appropriate pablo-quantization function according to the operation mode
  */
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
-    //pablo_quantize_row(x, y, k);
-    pablo_quantize_debug(x, y, k);
+    pablo_quantize_row(x, y, k);
+    //pablo_quantize_debug(x, y, k);
 }
 
 /**
@@ -176,7 +176,7 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
         for (int j = 0; j < PABLO; ++j) {
             tmp = y[i].qs[j];
             //y[i].qs[j] = pablo_encoding_table[tmp + ENCODING_OFFSET]; //pablo_encoding_table[y[i].qs[j] + ENCODING_OFFSET];
-            y[i].qs[j] = pablo_encoding_table[0];
+            y[i].qs[j] = pablo_encoding_table[158];
         }
     }
 }
