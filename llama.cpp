@@ -11501,7 +11501,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         struct ggml_tensor * tensor = ml.get_tensor_meta(i);
 
         const std::string name = ggml_get_name(tensor);
-        fprintf(stderr, "\n\nPABLO: name at begining: %s\n\n", name.c_str());
+        //fprintf(stderr, "\n\nPABLO: name at begining: %s\n\n", name.c_str());
 
         if (!ml.use_mmap) {
             if (read_data.size() < ggml_nbytes(tensor)) {
