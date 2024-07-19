@@ -15,7 +15,7 @@
 
 // translation tables
 #define ENCODING_OFFSET 128
-int8_t _pablo_encoding_table[256] = {
+int8_t pablo_encoding_table[256] = {
     -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, 
     -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7,
     -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6,
@@ -33,8 +33,6 @@ int8_t _pablo_encoding_table[256] = {
     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 
 };
-
-int8_t pablo_encoding_table[256] = {-8};
 
 #define DECODING_OFFSET 8
 int8_t pablo_decoding_table[16] = {
@@ -80,7 +78,14 @@ void pablo_dequantize_debug(const block_pablo * restrict x, float * restrict y, 
  */
 void pablo_init(void) {
     // Initialize pablo.h variables
-    fprintf(stderr, "\n\nPABLO got executed!\n\n");
+    
+    for (int i = 0; i < 256; i++) {
+        fprintf(stderr, "pablo_encoding_table[%d] = %d\n", i, pablo_encoding_table[i]);
+    }
+
+    for (int i = 0; i < 16; i++) {
+        fprintf(stderr, "pablo_decoding_table[%d] = %d\n", i, pablo_decoding_table[i]);
+    }
 }
 
 // out all pablo data gathered
