@@ -34,7 +34,7 @@ int8_t _pablo_encoding_table[256] = {
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 
 };
 
-int8_t pablo_encoding_table[256] = {0};
+int8_t pablo_encoding_table[256] = {-8};
 
 #define DECODING_OFFSET 8
 int8_t pablo_decoding_table[16] = {
