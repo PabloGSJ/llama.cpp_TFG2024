@@ -154,8 +154,8 @@ void pablo_print_all(void) {    // json format
  * Select the appropriate pablo-quantization function according to the operation mode
  */
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
-    pablo_quantize_row(x, y, k);
-    //pablo_quantize_debug(x, y, k);
+    //pablo_quantize_row(x, y, k);
+    pablo_quantize_debug(x, y, k);
 }
 
 /**
