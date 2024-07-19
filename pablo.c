@@ -243,6 +243,7 @@ void pablo_quantize_debug(const float * restrict x, block_pablo * restrict y, in
 void pablo_dequantize_row_assign(const block_pablo * restrict x, float * restrict y, int k) {
     //pablo_dequantize_debug(x, y, k);
     pablo_dequantize_row(x, y, k);
+    fprintf(stderr, "PABLO: Successful pablo execution\n");
 }
 
 /**
