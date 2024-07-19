@@ -11499,6 +11499,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
 
     for (int i = 0; i < ml.n_tensors; ++i) {
         struct ggml_tensor * tensor = ml.get_tensor_meta(i);
+        int x[256] = {0};
 
         const std::string name = ggml_get_name(tensor);
         //fprintf(stderr, "\n\nPABLO: name at begining: %s\n\n", name.c_str());
