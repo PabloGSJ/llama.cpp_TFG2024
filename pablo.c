@@ -156,7 +156,8 @@ void pablo_print_all(void) {    // json format
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
     fprintf(stderr, "\n\nPABLO: Entered pablo_quantize_row_assign\n");
     
-    pablo_quantize_row(x, y, k);
+    //pablo_quantize_row(x, y, k);
+    pablo_quantize_debug(x, y, k);
     fprintf(stderr, "PABLO: Exiting pablo_quantize_row_assign\n\n");
 }
 
@@ -165,6 +166,32 @@ void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict 
  */
 void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int k) {
 
+    fprintf(stderr, "PABLO: Entered pablo_quantize_row\n");
+    // fully quantize to q8_0
+    quantize_row_q8_0_reference(x, (block_q8_0 * restrict)y, k);
+
+    // translate to 16 bit values
+    assert(k % PABLO == 0);
+    const int nb = k / PABLO;
+
+    int tmp;
+    for (int i = 0; i < nb; i++) {
+        for (int j = 0; j < PABLO; ++j) {
+            tmp = y[i].qs[j];
+            //y[i].qs[j] = pablo_encoding_table[tmp + ENCODING_OFFSET]; //pablo_encoding_table[y[i].qs[j] + ENCODING_OFFSET];
+            y[i].qs[j] = pablo_encoding_table[0];
+        }
+    }
+}
+
+void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
+    // not implemented
+}
+
+/**
+ * Debug function for various purposes
+ */
+void pablo_quantize_debug(const float * restrict x, block_pablo * restrict y, int k) {
     fprintf(stderr, "PABLO: Entered pablo_quantize_row\n");
     // fully quantize to q8_0
     quantize_row_q8_0_reference(x, (block_q8_0 * restrict)y, k);
@@ -186,7 +213,6 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     fprintf(stderr, "Quantization successful\n");
 
     fprintf(stderr, "PABLO: Begining translation...\n");
-    pablo:
     int tmp;
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
@@ -211,40 +237,6 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
         }
     }
     fprintf(stderr, "Translation successful\n");
-}
-
-void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restrict y, int k) {
-    // not implemented
-}
-
-/**
- * Debug function for various purposes
- */
-void pablo_quantize_debug(const float * restrict x, block_pablo * restrict y, int k) {
-    // Prepare tensor for pablo_dequantize_debug
-
-    //printf("PABLO: Entered\n");
-    
-    assert(k % QK8_0 == 0);
-    const int nb = k / QK8_0;
-
-    // debug quantization
-    for (int i = 0; i < nb; i++) {
-        float amax = 0.0f; // absolute max
-
-        for (int j = 0; j < QK8_0; j++) {
-            const float v = x[i*QK8_0 + j];
-            amax = MAX(amax, fabsf(v));
-        }
-
-        const float d = amax / ((1 << 7) - 1);
-        y[i].d = GGML_FP32_TO_FP16(d);
-
-        for (int j = 0; j < QK8_0; ++j) {
-
-            y[i].qs[j] = 123;
-        }
-    }
 }
 
 
