@@ -86,6 +86,7 @@ void pablo_init(void) {
     for (int i = 0; i < 16; i++) {
         fprintf(stderr, "pablo_decoding_table[%d] = %d\n", i, pablo_decoding_table[i]);
     }
+    exit(0);
 }
 
 // out all pablo data gathered
