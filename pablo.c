@@ -154,11 +154,8 @@ void pablo_print_all(void) {    // json format
  * Select the appropriate pablo-quantization function according to the operation mode
  */
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
-    fprintf(stderr, "\n\nPABLO: Entered pablo_quantize_row_assign\n");
-    
     pablo_quantize_row(x, y, k);
     //pablo_quantize_debug(x, y, k);
-    fprintf(stderr, "PABLO: Exiting pablo_quantize_row_assign\n\n");
 }
 
 /**
@@ -192,7 +189,7 @@ void pablo_quantize_row_imprecise(const float * restrict x, block_pablo * restri
  * Debug function for various purposes
  */
 void pablo_quantize_debug(const float * restrict x, block_pablo * restrict y, int k) {
-    fprintf(stderr, "PABLO: Entered pablo_quantize_row\n");
+    fprintf(stderr, "\n\nPABLO: Entered pablo_quantize_row\n");
     // fully quantize to q8_0
     quantize_row_q8_0_reference(x, (block_q8_0 * restrict)y, k);
 
@@ -236,7 +233,7 @@ void pablo_quantize_debug(const float * restrict x, block_pablo * restrict y, in
             }
         }
     }
-    fprintf(stderr, "Translation successful\n");
+    fprintf(stderr, "Translation successful\n\n");
 }
 
 
