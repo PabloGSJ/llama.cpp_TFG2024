@@ -15,7 +15,7 @@
 
 // translation tables
 #define ENCODING_OFFSET 128
-int8_t pablo_encoding_table[256] = {
+int8_t _pablo_encoding_table[256] = {
     -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, 
     -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7,
     -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6,
@@ -33,6 +33,8 @@ int8_t pablo_encoding_table[256] = {
     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 
 };
+
+int8_t pablo_encoding_table[256] = {0};
 
 #define DECODING_OFFSET 8
 int8_t pablo_decoding_table[16] = {
@@ -175,8 +177,8 @@ void pablo_quantize_row(const float * restrict x, block_pablo * restrict y, int 
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
             tmp = y[i].qs[j];
-            //y[i].qs[j] = pablo_encoding_table[tmp + ENCODING_OFFSET]; //pablo_encoding_table[y[i].qs[j] + ENCODING_OFFSET];
-            y[i].qs[j] = pablo_encoding_table[255];
+            y[i].qs[j] = pablo_encoding_table[tmp + ENCODING_OFFSET];
+            //y[i].qs[j] = pablo_encoding_table[255];
         }
     }
 }
