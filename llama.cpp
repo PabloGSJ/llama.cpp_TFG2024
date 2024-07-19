@@ -11499,7 +11499,8 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
 
     for (int i = 0; i < ml.n_tensors; ++i) {
         struct ggml_tensor * tensor = ml.get_tensor_meta(i);
-        int x[256] = {0};
+        // PABLO
+        int pablo_x[256] = {0};
 
         const std::string name = ggml_get_name(tensor);
         //fprintf(stderr, "\n\nPABLO: name at begining: %s\n\n", name.c_str());
@@ -11616,6 +11617,8 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
 
             // PABLO: print the current tensor histogram
             //pablo_print_tensor();
+            for (int pablo_i=0; pablo_i<256; pablo_i++)
+                printf("cosa %d", pablo_x[pablo_i]);
 
             LLAMA_LOG_INFO("size = %8.2f MiB -> %8.2f MiB", ggml_nbytes(tensor)/1024.0/1024.0, new_size/1024.0/1024.0);
             int64_t tot_count = 0;
