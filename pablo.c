@@ -156,8 +156,8 @@ void pablo_print_all(void) {    // json format
 void pablo_quantize_row_assign(const float * restrict x, block_pablo * restrict y, int k) {
     fprintf(stderr, "\n\nPABLO: Entered pablo_quantize_row_assign\n");
     
-    //pablo_quantize_row(x, y, k);
-    pablo_quantize_debug(x, y, k);
+    pablo_quantize_row(x, y, k);
+    //pablo_quantize_debug(x, y, k);
     fprintf(stderr, "PABLO: Exiting pablo_quantize_row_assign\n\n");
 }
 
