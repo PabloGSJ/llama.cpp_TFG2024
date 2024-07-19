@@ -256,7 +256,7 @@ void pablo_dequantize_row(const block_pablo * restrict x, float * restrict y, in
     for (int i = 0; i < nb; i++) {
         for (int j = 0; j < PABLO; ++j) {
 
-            y[i*PABLO + j] = decoding_table[x[i].qs[j] + DECODING_OFFSET];
+            y[i*PABLO + j] = decoding_table[x[i].qs[j] + DECODING_OFFSET]; 
         }
     }
 }
