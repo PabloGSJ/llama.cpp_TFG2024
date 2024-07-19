@@ -78,15 +78,6 @@ void pablo_dequantize_debug(const block_pablo * restrict x, float * restrict y, 
  */
 void pablo_init(void) {
     // Initialize pablo.h variables
-    
-    for (int i = 0; i < 256; i++) {
-        fprintf(stderr, "pablo_encoding_table[%d] = %d\n", i, pablo_encoding_table[i]);
-    }
-
-    for (int i = 0; i < 16; i++) {
-        fprintf(stderr, "pablo_decoding_table[%d] = %d\n", i, pablo_decoding_table[i]);
-    }
-    exit(0);
 }
 
 // out all pablo data gathered
