@@ -11618,7 +11618,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
             // PABLO: print the current tensor histogram
             //pablo_print_tensor();
             for (int pablo_i=0; pablo_i<256; pablo_i++)
-                printf("cosa %d", pablo_x[pablo_i]);
+                printf("pablo_x[%d]=%d\n", pablo_i, pablo_x[pablo_i]);
 
             LLAMA_LOG_INFO("size = %8.2f MiB -> %8.2f MiB", ggml_nbytes(tensor)/1024.0/1024.0, new_size/1024.0/1024.0);
             int64_t tot_count = 0;
