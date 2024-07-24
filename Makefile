@@ -14,8 +14,6 @@ TEST_TARGETS = \
 # Code coverage output files
 COV_TARGETS = *.gcno tests/*.gcno *.gcda tests/*.gcda *.gcov tests/*.gcov lcov-report gcovr-report
 
-LLAMA_DEBUG = 1
-
 ifndef UNAME_S
 UNAME_S := $(shell uname -s)
 endif
@@ -619,8 +617,8 @@ $(info )
 # Build library
 #
 # PABLO:
- pablo.o: pablo.c pablo.h pablo-secret.h
-	$(CC)  $(CFLAGS)   -c $< -o $@ -g 
+ pablo.o: pablo.c pablo.cpp pablo.h
+	$(CC)  $(CFLAGS)   -c $< -o $@
 
 ggml.o: ggml.c ggml.h ggml-cuda.h pablo.h
 	$(CC)  $(CFLAGS)   -c $< -o $@

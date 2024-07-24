@@ -2617,7 +2617,6 @@ struct llama_model_loader {
             }
 
             switch (type_max) {
-                case GGML_TYPE_PABLO:   ftype = LLAMA_FTYPE_MOSTLY_PABLO;   break;
                 case GGML_TYPE_F32:     ftype = LLAMA_FTYPE_ALL_F32;        break;
                 case GGML_TYPE_F16:     ftype = LLAMA_FTYPE_MOSTLY_F16;     break;
                 case GGML_TYPE_Q4_0:    ftype = LLAMA_FTYPE_MOSTLY_Q4_0;    break;
@@ -2969,7 +2968,6 @@ static std::string llama_model_ftype_name(llama_ftype ftype) {
     }
 
     switch (ftype) {
-        case LLAMA_FTYPE_MOSTLY_PABLO: return "PABLO";
         case LLAMA_FTYPE_ALL_F32:     return "all F32";
         case LLAMA_FTYPE_MOSTLY_F16:  return "F16";
         case LLAMA_FTYPE_MOSTLY_Q4_0: return "Q4_0";
@@ -4741,7 +4739,6 @@ static int llama_model_load(const std::string & fname, llama_model & model, llam
             || !(
                 model.ftype == LLAMA_FTYPE_ALL_F32 ||
                 model.ftype == LLAMA_FTYPE_MOSTLY_F16 ||
-                model.ftype == LLAMA_FTYPE_MOSTLY_PABLO ||
                 model.ftype == LLAMA_FTYPE_MOSTLY_Q4_0 ||
                 model.ftype == LLAMA_FTYPE_MOSTLY_Q4_1
             )
@@ -11363,7 +11360,6 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
     llama_ftype ftype = params->ftype;
 
     switch (params->ftype) {
-        case LLAMA_FTYPE_MOSTLY_PABLO: quantized_type = GGML_TYPE_PABLO; break;
         case LLAMA_FTYPE_MOSTLY_Q4_0: quantized_type = GGML_TYPE_Q4_0; break;
         case LLAMA_FTYPE_MOSTLY_Q4_1: quantized_type = GGML_TYPE_Q4_1; break;
         case LLAMA_FTYPE_MOSTLY_Q5_0: quantized_type = GGML_TYPE_Q5_0; break;
@@ -11441,9 +11437,6 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
     gguf_set_val_u32(ctx_out, "general.quantization_version", GGML_QNT_VERSION);
     gguf_set_val_u32(ctx_out, "general.file_type", ftype);
 
-    // PABLO: initialize pablo data
-    pablo_init_ggml();
-
     for (int i = 0; i < ml.n_tensors; ++i) {
         struct ggml_tensor * meta = ml.get_tensor_meta(i);
 
@@ -11487,7 +11480,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         gguf_add_tensor(ctx_out, meta);
     }
 
-    std::ofstream fout(fname_out, std::ios::out);   // PABLO: std::ios::binary -> std::ios::out
+    std::ofstream fout(fname_out, std::ios::binary);
     fout.exceptions(std::ofstream::failbit); // fail fast on write errors
 
     const size_t meta_size = gguf_get_meta_size(ctx_out);
@@ -11501,7 +11494,6 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         struct ggml_tensor * tensor = ml.get_tensor_meta(i);
 
         const std::string name = ggml_get_name(tensor);
-        //fprintf(stderr, "\n\nPABLO: name at begining: %s\n\n", name.c_str());
 
         if (!ml.use_mmap) {
             if (read_data.size() < ggml_nbytes(tensor)) {
@@ -11645,7 +11637,7 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
 
     // PABLO:
     pablo_print_all_ggml();
-    
+
     // go back to beginning of file and write the updated meta data
     {
         fout.seekp(0);
@@ -11681,7 +11673,6 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         LLAMA_LOG_WARN("%s: WARNING: %d of %d tensor(s) incompatible with k-quants and required fallback quantization\n",
                 __func__, qs.n_fallback, qs.n_k_quantized + qs.n_fallback);
     }
-
 }
 
 static int llama_apply_lora_from_file_internal(

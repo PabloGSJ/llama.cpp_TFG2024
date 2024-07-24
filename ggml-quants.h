@@ -7,15 +7,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-// PABLO: todo
-#define PABLO 32
-typedef struct {
-    ggml_fp16_t d;          // delta
-    int8_t qs[PABLO];       // quants
-} block_pablo;
-static_assert(sizeof(block_pablo) == sizeof(ggml_fp16_t) + PABLO, "wrong PABLO block size/padding");    // copying q8
-//static_assert(sizeof(block_q4_0) == sizeof(ggml_fp16_t) + QK4_0 / 2, "wrong q4_0 block size/padding");  // copying q4
-
 #define QK4_0 32
 typedef struct {
     ggml_fp16_t d;          // delta
@@ -257,10 +248,6 @@ extern "C" {
 #endif
 
 // Quantization
-// PABLO:
-void quantize_row_pablo_reference(const float * GGML_RESTRICT x, block_pablo * GGML_RESTRICT y, int k);
-void quantize_row_pablo(const float * GGML_RESTRICT x, void * GGML_RESTRICT y, int k);
-
 void quantize_row_q4_0_reference(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
 void quantize_row_q4_1_reference(const float * GGML_RESTRICT x, block_q4_1 * GGML_RESTRICT y, int k);
 void quantize_row_q5_0_reference(const float * GGML_RESTRICT x, block_q5_0 * GGML_RESTRICT y, int k);
@@ -300,7 +287,6 @@ void quantize_row_iq3_s  (const float * GGML_RESTRICT x, void * GGML_RESTRICT y,
 void quantize_row_iq2_s  (const float * GGML_RESTRICT x, void * GGML_RESTRICT y, int k);
 
 // Dequantization
-void dequantize_row_pablo(const block_pablo * GGML_RESTRICT x, float * GGML_RESTRICT y, int k);
 void dequantize_row_q4_0(const block_q4_0 * GGML_RESTRICT x, float * GGML_RESTRICT y, int k);
 void dequantize_row_q4_1(const block_q4_1 * GGML_RESTRICT x, float * GGML_RESTRICT y, int k);
 void dequantize_row_q5_0(const block_q5_0 * GGML_RESTRICT x, float * GGML_RESTRICT y, int k);
@@ -347,9 +333,6 @@ void ggml_vec_dot_iq3_s_q8_K  (int n, float * GGML_RESTRICT s, size_t bs, const 
 //
 // Quantization utilizing an importance matrix (a.k.a. "Activation aWare Quantization")
 //
-// PABLO:
-size_t quantize_pablo   (const float * src, void * dst, int nrows, int n_per_row, int64_t * hist, const float * imatrix);
-
 size_t quantize_iq2_xxs(const float * src, void * dst, int nrows, int n_per_row, int64_t * hist, const float * imatrix);
 size_t quantize_iq2_xs (const float * src, void * dst, int nrows, int n_per_row, int64_t * hist, const float * imatrix);
 size_t quantize_iq2_s  (const float * src, void * dst, int nrows, int n_per_row, int64_t * hist, const float * imatrix);

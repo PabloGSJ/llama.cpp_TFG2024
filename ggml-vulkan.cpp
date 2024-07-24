@@ -4108,9 +4108,6 @@ static void ggml_vk_quantize_data(const float * from, void * to, size_t ne, ggml
     case GGML_TYPE_F32:
         memcpy(to, from, sizeof(float) * ne);
         break;
-    case GGML_TYPE_PABLO:   // PABLO
-        ggml_quantize_pablo(from, to, ne, ne, hist_cur.data());
-        break;
     case GGML_TYPE_Q4_0:
         ggml_quantize_q4_0(from, to, ne, ne, hist_cur.data());
         break;
