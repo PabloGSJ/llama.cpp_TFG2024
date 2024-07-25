@@ -12,6 +12,7 @@
 #include <float.h>
 #include <stdlib.h> // for qsort
 #include <stdio.h>  // for GGML_ASSERT
+#include <unistd.h>
 
 
 //#define _PABLO_PRINT_ALL  // debug
