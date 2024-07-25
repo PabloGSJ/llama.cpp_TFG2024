@@ -3,29 +3,38 @@
 #ifndef PABLO_H
 #define PABLO_H
 
-// DEBUG
-//#define _PABLO_PRINT_ROW
-//#define _PABLO_PRINT_TENSOR
-#define _PABLO_PRINT_ALL
+#include "ggml-quants.h"
+#include "ggml-impl.h"
 
-#define PABLO_PREFIX    "PABLO"
-#define PABLO_ROW_PREFIX        "PABLO_unistd-row"
-#define PABLO_TENSOR_PREFIX     "PABLO_unistd-tensor"
+#include <math.h>
+#include <string.h>
+#include <assert.h>
+#include <float.h>
+#include <stdlib.h> // for qsort
+#include <stdio.h>  // for GGML_ASSERT
 
-#define PABLO_NUM_TENSORS       291     // 291
-#define PABLO_NUM_ROWS          4096    // 4096
-#define PABLO_NUM_HIST          16
 
-// VARIABLES
-extern int pablo_tid;   // active tensor id
-extern int pablo_rid;   // active row id
+//#define _PABLO_PRINT_ALL  // debug
 
-// histogram with maximum granularity
-extern int pablo_histogram[PABLO_NUM_TENSORS][PABLO_NUM_ROWS][PABLO_NUM_HIST];
+extern int pablo_tid;       // active tensor id
+extern int pablo_rid;       // active row id
 
-// Print the information about the different histograms
-void pablo_print_row(void);
-void pablo_print_tensor(void);
+
+/**
+ * 
+ */
+void pablo_init(void);
+
+/**
+ * Print all data measured during execution to stdout
+ */
 void pablo_print_all(void);
+
+// Quantization - Dequantization function handlers
+void pablo_quantize_row_q4_0_assign(const float * restrict x, block_q4_0 * restrict y, int k);
+void pablo_dequantize_row_q4_0_assign(const block_q4_0 * restrict x, float * restrict y, int k);
+
+void pablo_quantize_row_q8_0_assign(const float * restrict x, block_q8_0 * restrict y, int k);
+void pablo_dequantize_row_q8_0_assign(const block_q8_0 * restrict x, float * restrict y, int k);
 
 #endif /* PABLO_H */
