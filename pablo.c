@@ -102,7 +102,6 @@ void pablo_print_all(void) {    // json format
 }
 
 void pablo_quantize_row_q4_0_assign(const float * restrict x, block_q4_0 * restrict y, int k) {
-    fprintf(stderr, "PABLO: pablo_quantize_row_q4_0_assign\n");
     simple_q4_0_quantize_row(x, y, k);
 }
 
@@ -150,7 +149,6 @@ void simple_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y,
 
 
 void pablo_dequantize_row_q4_0_assign(const block_q4_0 * restrict x, float * restrict y, int k) {
-    fprintf(stderr, "PABLO: pablo_dequantize_row_q4_0_assign\n");
     simple_q4_0_dequantize_row(x, y, k);
 }
 
@@ -176,7 +174,6 @@ void simple_q4_0_dequantize_row(const block_q4_0 * restrict x, float * restrict 
 
 
 void pablo_quantize_row_q8_0_assign(const float * restrict x, block_q8_0 * restrict y, int k) {
-    fprintf(stderr, "PABLO: pablo_quantize_row_q8_0_assign\n");
     simple_q8_0_quantize_row(x, y, k);
 }
 
@@ -207,7 +204,6 @@ void simple_q8_0_quantize_row(const float * restrict x, block_q8_0 * restrict y,
 
 
 void pablo_dequantize_row_q8_0_assign(const block_q8_0 * restrict x, float * restrict y, int k) {
-    fprintf(stderr, "PABLO: pablo_dequantize_row_q8_0_assign\n");
     simple_q8_0_dequantize_row(x, y, k);
 }
 
