@@ -617,7 +617,7 @@ $(info )
 # Build library
 #
 # PABLO:
- pablo.o: pablo.c pablo.cpp pablo.h
+ pablo.o: pablo.c pablo.h
 	$(CC)  $(CFLAGS)   -c $< -o $@
 
 ggml.o: ggml.c ggml.h ggml-cuda.h pablo.h
