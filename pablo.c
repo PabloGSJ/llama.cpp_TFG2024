@@ -19,15 +19,15 @@ int pablo_rid = 0;
 
 
 
-void simple_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, int k);
-void pablo_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, int k);
+void simple_q4_0_quantize_row(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
+void pablo_q4_0_quantize_row(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
 
-void simple_q4_0_dequantize_row(const block_q4_0 * restrict x, float * restrict y, int k);
+void simple_q4_0_dequantize_row(const block_q4_0 * GGML_RESTRICT x, float * GGML_RESTRICT y, int k);
 
-void simple_q8_0_quantize_row(const float * restrict x, block_q8_0 * restrict y, int k);
-void pablo_q8_0_quantize_row(const float * restrict x, block_q8_0 * restrict y, int k);
+void simple_q8_0_quantize_row(const float * GGML_RESTRICT x, block_q8_0 * GGML_RESTRICT y, int k);
+void pablo_q8_0_quantize_row(const float * GGML_RESTRICT x, block_q8_0 * GGML_RESTRICT y, int k);
 
-void simple_q8_0_dequantize_row(const block_q8_0 * restrict x, float * restrict y, int k);
+void simple_q8_0_dequantize_row(const block_q8_0 * GGML_RESTRICT x, float * GGML_RESTRICT y, int k);
 
 
 
