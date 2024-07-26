@@ -314,6 +314,8 @@ void simple_q8_0_quantize_row(const float * restrict x, block_q8_0 * restrict y,
 }
 
 void pablo_q8_0_quantize_row(const float * GGML_RESTRICT x, block_q8_0 * GGML_RESTRICT y, int k) {
+    fprintf(stderr, "PABLO: Successfull execution\n");
+
     // fully quantize to q8_0
     simple_q8_0_quantize_row(x, y, k);
 
@@ -337,7 +339,6 @@ void pablo_dequantize_row_q8_0_assign(const block_q8_0 * restrict x, float * res
 }
 
 void simple_q8_0_dequantize_row(const block_q8_0 * restrict x, float * restrict y, int k) {
-    fprintf(stderr, "PABLO: Successfull execution\n");
     static const int qk = QK8_0;
 
     assert(k % qk == 0);
@@ -354,6 +355,9 @@ void simple_q8_0_dequantize_row(const block_q8_0 * restrict x, float * restrict 
 }
 
 void pablo_q8_0_dequantize_row(const block_q8_0 * GGML_RESTRICT x, float * GGML_RESTRICT y, int k) {
+    fprintf(stderr, "PABLO: Successfull execution\n");
+
+    
     assert(k % QK8_0 == 0);
     const int nb = k / QK8_0;
 
