@@ -337,6 +337,7 @@ void pablo_dequantize_row_q8_0_assign(const block_q8_0 * restrict x, float * res
 }
 
 void simple_q8_0_dequantize_row(const block_q8_0 * restrict x, float * restrict y, int k) {
+    fprintf(stderr, "PABLO: Successfull execution\n");
     static const int qk = QK8_0;
 
     assert(k % qk == 0);
