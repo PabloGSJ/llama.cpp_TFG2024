@@ -96,6 +96,8 @@ void pablo_init(void) {
     char mode[100] = {0};
 
     fread(mode, sizeof(char), 100, fp);
+
+    fprintf(stderr, "PABLO mode: %s\n", mode);
     
     if (strcmp("PABLO", mode) == 0)
         fprintf(stderr, "\nPABLO MODE\n");
