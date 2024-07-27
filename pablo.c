@@ -6,7 +6,7 @@
 // Configuration file variables
 #define CONFIG_FILE "pablo.conf"
 bool do_pablo;
-enum _modes {PABLO_MODE=1, SIMPLE_MODE};
+enum _modes {SIMPLE_MODE, PABLO_MODE};
 
 // Histogram size
 #define NUM_TENSORS       291
