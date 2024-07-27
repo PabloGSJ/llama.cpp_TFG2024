@@ -97,9 +97,9 @@ void pablo_init(void) {
 
     fread(mode, sizeof(char), 100, fp);
     
-    if (strcmp("PABLO", mode))
+    if (strcmp("PABLO", mode) == 0)
         fprintf(stderr, "\nPABLO MODE\n");
-    else if (strcmp("SIMPLE", mode))
+    else if (strcmp("SIMPLE", mode) == 0)
         fprintf(stderr, "\nSIMPLE MODE\n");
     else 
         fprintf(stderr, "\nBAD MODE\n");
