@@ -6,6 +6,7 @@
 // Configuration file variables
 #define CONFIG_FILE "pablo.conf"
 bool do_pablo;
+enum _modes {PABLO_MODE=1, SIMPLE_MODE};
 
 // Histogram size
 #define NUM_TENSORS       291
@@ -93,28 +94,12 @@ void pablo_init(void) {
         exit(1);
     }
 
-    char mode[100] = {0};
     int num = 0;
 
-    // fread(mode, sizeof(char), 100, fp);
     fscanf(fp, "%d", &num);
-
-    fprintf(stderr, "PABLO mode: %d\n", num);
     
-    // if (strcmp("PABLO", mode) == 0)
-    //     fprintf(stderr, "\nPABLO MODE\n");
-    // else if (strcmp("SIMPLE", mode) == 0)
-    //     fprintf(stderr, "\nSIMPLE MODE\n");
-    // else 
-    //     fprintf(stderr, "\nBAD MODE\n");
+    do_pablo = num == PABLO_MODE;
 
-    if (num == 1)
-        fprintf(stderr, "\nPABLO MODE\n");
-    else if (num == 2)
-        fprintf(stderr, "\nSIMPLE MODE\n");
-    else 
-        fprintf(stderr, "\nBAD MODE\n");
-    
     fclose(fp);
 }
 
@@ -203,15 +188,20 @@ void pablo_dequantize_row_q4_0_assign(const block_q4_0 * restrict x, float * res
 void pablo_quantize_row_q8_0_assign(const float * restrict x, block_q8_0 * restrict y, int k) {
     pablo_init();
 
-    simple_q8_0_quantize_row(x, y, k);
-    //pablo_q8_0_quantize_row(x, y, k);
+    if (do_pablo) 
+        pablo_q8_0_quantize_row(x, y, k);
+    else
+        simple_q8_0_quantize_row(x, y, k);
+    
 }
 
 void pablo_dequantize_row_q8_0_assign(const block_q8_0 * restrict x, float * restrict y, int k) {
     pablo_init();
 
-    simple_q8_0_dequantize_row(x, y, k);
-    //pablo_q8_0_dequantize_row(x, y, k);
+    if (do_pablo)
+        pablo_q8_0_dequantize_row(x, y, k);
+    else 
+        simple_q8_0_dequantize_row(x, y, k);
 }
 
 
@@ -257,6 +247,7 @@ void simple_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y,
 }
 
 void pablo_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, int k) {
+
     static const int qk = QK4_0;
     assert(k % qk == 0);
     const int nb = k / qk;
@@ -367,7 +358,7 @@ void simple_q8_0_quantize_row(const float * restrict x, block_q8_0 * restrict y,
 }
 
 void pablo_q8_0_quantize_row(const float * GGML_RESTRICT x, block_q8_0 * GGML_RESTRICT y, int k) {
-    // fprintf(stderr, "PABLO: Successfull execution\n");
+    fprintf(stderr, "PABLO: me is pablo\n");
 
     // fully quantize to q8_0
     simple_q8_0_quantize_row(x, y, k);
