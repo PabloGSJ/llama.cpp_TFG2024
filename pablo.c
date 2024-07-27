@@ -78,7 +78,6 @@ void pablo_q8_0_dequantize_row(const block_q8_0 * GGML_RESTRICT x, float * GGML_
 
 
 
-
 void pablo_init(void) {
     // Initialize pablo.h variables
 }
@@ -149,10 +148,28 @@ void pablo_print_all(void) {    // json format
     #endif /* _PABLO_PRINT_ALL  */
 }
 
+// Assign functions 
 void pablo_quantize_row_q4_0_assign(const float * restrict x, block_q4_0 * restrict y, int k) {
     simple_q4_0_quantize_row(x, y, k);
 }
 
+void pablo_dequantize_row_q4_0_assign(const block_q4_0 * restrict x, float * restrict y, int k) {
+    simple_q4_0_dequantize_row(x, y, k);
+}
+
+void pablo_quantize_row_q8_0_assign(const float * restrict x, block_q8_0 * restrict y, int k) {
+    simple_q8_0_quantize_row(x, y, k);
+    //pablo_q8_0_quantize_row(x, y, k);
+}
+
+void pablo_dequantize_row_q8_0_assign(const block_q8_0 * restrict x, float * restrict y, int k) {
+    simple_q8_0_dequantize_row(x, y, k);
+    //pablo_q8_0_dequantize_row(x, y, k);
+}
+
+
+
+// Quantization - Dequantization functions
 void simple_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, int k) {
     static const int qk = QK4_0;
 
@@ -237,11 +254,6 @@ void pablo_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, 
     }
 }
 
-
-void pablo_dequantize_row_q4_0_assign(const block_q4_0 * restrict x, float * restrict y, int k) {
-    simple_q4_0_dequantize_row(x, y, k);
-}
-
 void simple_q4_0_dequantize_row(const block_q4_0 * restrict x, float * restrict y, int k) {
     static const int qk = QK4_0;
 
@@ -280,12 +292,6 @@ void pablo_q4_0_dequantize_row(const block_q4_0 * restrict x, float * restrict y
             y[i*qk + j + qk/2] = x1*d;
         }
     }
-}
-
-
-void pablo_quantize_row_q8_0_assign(const float * restrict x, block_q8_0 * restrict y, int k) {
-    // simple_q8_0_quantize_row(x, y, k);
-    pablo_q8_0_quantize_row(x, y, k);
 }
 
 void simple_q8_0_quantize_row(const float * restrict x, block_q8_0 * restrict y, int k) {
@@ -330,12 +336,6 @@ void pablo_q8_0_quantize_row(const float * GGML_RESTRICT x, block_q8_0 * GGML_RE
             y[i].qs[j] = pablo_encoding_table[tmp + ENCODING_OFFSET];
         }
     }
-}
-
-
-void pablo_dequantize_row_q8_0_assign(const block_q8_0 * restrict x, float * restrict y, int k) {
-    // simple_q8_0_dequantize_row(x, y, k);
-    pablo_q8_0_dequantize_row(x, y, k);
 }
 
 void simple_q8_0_dequantize_row(const block_q8_0 * restrict x, float * restrict y, int k) {
