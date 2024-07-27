@@ -85,7 +85,8 @@ void pablo_init(void) {
     // only execute this function once
     if (is_init) 
         return;
-    
+    is_init = true;
+
     FILE *fp = fopen(CONFIG_FILE, "r");
     if (fp == NULL) {
         fprintf(stderr, "\nERROR: no %s file found!\n", CONFIG_FILE);
