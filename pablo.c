@@ -108,7 +108,7 @@ void pablo_init(void) {
     // else 
     //     fprintf(stderr, "\nBAD MODE\n");
 
-    if (num = 1)
+    if (num == 1)
         fprintf(stderr, "\nPABLO MODE\n");
     else if (num == 2)
         fprintf(stderr, "\nSIMPLE MODE\n");
