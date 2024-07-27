@@ -94,14 +94,23 @@ void pablo_init(void) {
     }
 
     char mode[100] = {0};
+    int num = 0;
 
-    fread(mode, sizeof(char), 100, fp);
+    // fread(mode, sizeof(char), 100, fp);
+    fscanf(fp, "%d", &num);
 
-    fprintf(stderr, "PABLO mode: %s\n", mode);
+    fprintf(stderr, "PABLO mode: %d\n", num);
     
-    if (strcmp("PABLO", mode) == 0)
+    // if (strcmp("PABLO", mode) == 0)
+    //     fprintf(stderr, "\nPABLO MODE\n");
+    // else if (strcmp("SIMPLE", mode) == 0)
+    //     fprintf(stderr, "\nSIMPLE MODE\n");
+    // else 
+    //     fprintf(stderr, "\nBAD MODE\n");
+
+    if (num = 1)
         fprintf(stderr, "\nPABLO MODE\n");
-    else if (strcmp("SIMPLE", mode) == 0)
+    else if (num == 2)
         fprintf(stderr, "\nSIMPLE MODE\n");
     else 
         fprintf(stderr, "\nBAD MODE\n");
