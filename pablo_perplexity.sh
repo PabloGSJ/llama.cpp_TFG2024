@@ -21,9 +21,8 @@ out_file=simple_q4_0
 echo 0 > $CONF_FILE
 
 ./quantize $MODELF/$BASE_MODEL $MODELF/$out_file.gguf Q4_0 1
-
-echo "Measuring $out_file..."
 for i in 0 1 2 3 4 ; do
+    echo "Measuring $out_file-$i..."
     ./perplexity -m $MODELF/$out_file.gguf -f $TEST_FILE > pablo_results/$out_file-$i.stdout 2> pablo_results/$out_file-$i.stderr
 done 
 
@@ -32,9 +31,8 @@ out_file=simple_q8_0
 echo 0 > $CONF_FILE
 
 ./quantize $MODELF/$BASE_MODEL $MODELF/$out_file.gguf Q8_0 1
-
-echo "Measuring $out_file..."
 for i in 0 1 2 3 4 ; do
+    echo "Measuring $out_file-$i..."
     ./perplexity -m $MODELF/$out_file.gguf -f $TEST_FILE > pablo_results/$out_file-$i.stdout 2> pablo_results/$out_file-$i.stderr
 done 
 # Pablo q8_0
@@ -42,8 +40,7 @@ out_file=pablo_q8_0
 echo 1 > $CONF_FILE
 
 ./quantize $MODELF/$BASE_MODEL $MODELF/$out_file.gguf Q8_0 1
-
-echo "Measuring $out_file..."
 for i in 0 1 2 3 4 ; do
+    echo "Measuring $out_file-$i..."
     ./perplexity -m $MODELF/$out_file.gguf -f $TEST_FILE > pablo_results/$out_file-$i.stdout 2> pablo_results/$out_file-$i.stderr
 done 
