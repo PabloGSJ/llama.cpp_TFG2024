@@ -394,6 +394,8 @@ void simple_q8_0_dequantize_row(const block_q8_0 * restrict x, float * restrict 
 
         for (int j = 0; j < qk; ++j) {
             y[i*qk + j] = x[i].qs[j]*d;
+
+            fprintf(stdout, "PABLO: y[%d*%d + %d] = decoding_table[%d + %d] * %.2f = %.2f\n", i, QK8_0, j, x[i].qs[j], DECODING_OFFSET, d, y[i*QK8_0 + j]);
         }
     }
 }
