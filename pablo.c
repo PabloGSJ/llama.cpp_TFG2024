@@ -395,7 +395,7 @@ void simple_q8_0_dequantize_row(const block_q8_0 * restrict x, float * restrict 
         for (int j = 0; j < qk; ++j) {
             y[i*qk + j] = x[i].qs[j]*d;
 
-            fprintf(stdout, "PABLO: y[%d*%d + %d] = decoding_table[%d + %d] * %f = %f\n", i, QK8_0, j, x[i].qs[j], DECODING_OFFSET, d, y[i*QK8_0 + j]);
+            // fprintf(stdout, "PABLO: y[%d*%d + %d] = decoding_table[%d + %d] * %f = %f\n", i, QK8_0, j, x[i].qs[j], DECODING_OFFSET, d, y[i*QK8_0 + j]);
         }
     }
 }
@@ -411,7 +411,7 @@ void pablo_q8_0_dequantize_row(const block_q8_0 * GGML_RESTRICT x, float * GGML_
         for (int j = 0; j < qk; ++j) {
             y[i*QK8_0 + j] = decoding_table[x[i].qs[j] + DECODING_OFFSET] * d; 
 
-            fprintf(stdout, "PABLO: y[%d*%d + %d] = decoding_table[%d + %d] * %f = %f\n", i, QK8_0, j, x[i].qs[j], DECODING_OFFSET, d, y[i*QK8_0 + j]);
+            // fprintf(stdout, "PABLO: y[%d*%d + %d] = decoding_table[%d + %d] * %f = %f\n", i, QK8_0, j, x[i].qs[j], DECODING_OFFSET, d, y[i*QK8_0 + j]);
         }
     }
 }
