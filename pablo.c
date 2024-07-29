@@ -133,7 +133,7 @@ void pablo_init(void) {
     int table;
 
     fread(mode, sizeof(char), 4, fp);
-    fscanf(fp, "%d %d", &q4_0_radius, &table);
+    fscanf(fp, "%hhd %d", &q4_0_radius, &table);
 
     fclose(fp);
 
