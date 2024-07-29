@@ -86,7 +86,7 @@ int8_t basic_decoding_table[16] = {
 int8_t balanced_decoding_table[16] = {-127, -65, -50, -38, -28, -19, -10, -1, 0, 9, 18, 27, 37, 49, 64, 127};
 
 // pablo_q4_0 quantization radius
-uint8_t q4_0_radius = 0;
+unsigned int q4_0_radius = 0;
 
 // encoding-decoding table set to use
 enum _table_mode {BASIC_TABLE, BALANCED_TABLE};
