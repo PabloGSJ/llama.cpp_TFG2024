@@ -428,9 +428,9 @@ void pablo_q8_0_dequantize_row(const block_q8_0 * GGML_RESTRICT x, float * GGML_
         const float d = GGML_FP16_TO_FP32(x[i].d);
 
         for (int j = 0; j < qk; ++j) {
-            y[i*QK8_0 + j] = decoding_table[x[i].qs[j] + DECODING_OFFSET] * d; 
+            y[i*qk + j] = decoding_table[x[i].qs[j] + DECODING_OFFSET] * d; 
 
-            fprintf(stdout, "PABLO: %d * %f = %f\n", decoding_table[x[i].qs[j] + DECODING_OFFSET], d, y[i*qk + j]);
+            // fprintf(stdout, "PABLO: %d * %f = %f\n", decoding_table[x[i].qs[j] + DECODING_OFFSET], d, y[i*qk + j]);
         }
     }
 }
