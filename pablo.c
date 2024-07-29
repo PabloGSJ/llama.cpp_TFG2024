@@ -151,6 +151,10 @@ void pablo_init(void) {
             encoding_table = balanced_encoding_table;
             decoding_table = balanced_decoding_table;
             break;
+        
+        default :
+            fprintf(stderr, "ERROR: bad table mode in %s!\n", CONFIG_FILE);
+            exit(1);
     }
 
     #ifdef _PABLO_DEBUG_OUT
