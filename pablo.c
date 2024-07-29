@@ -100,9 +100,9 @@ void pablo_init(void) {
     do_pablo = num == PABLO_MODE;
 
     if (do_pablo)
-        fprintf(stdout, "PABLO: performing PABLO (de)quantization...\n");
+        fprintf(stdout, "\nPABLO: performing PABLO (de)quantization...\n");
     else
-        fprintf(stdout, "PABLO: performing SIMPLE (de)quantization...\n");
+        fprintf(stdout, "\nPABLO: performing SIMPLE (de)quantization...\n");
 
     fclose(fp);
 }
@@ -376,7 +376,7 @@ void pablo_q8_0_quantize_row(const float * GGML_RESTRICT x, block_q8_0 * GGML_RE
             tmp = y[i].qs[j];
             y[i].qs[j] = encoding_table[tmp + ENCODING_OFFSET];
 
-            // fprintf(stdout, "PABLO: y[%d].qs[%d] = encoding_table[%d + %d] = %d\n", i, j, tmp, ENCODING_OFFSET, y[i].qs[j]);
+            fprintf(stdout, "PABLO: y[%d].qs[%d] = encoding_table[%d + %d] = %d\n", i, j, tmp, ENCODING_OFFSET, y[i].qs[j]);
 
         }
     }
@@ -409,7 +409,7 @@ void pablo_q8_0_dequantize_row(const block_q8_0 * GGML_RESTRICT x, float * GGML_
         for (int j = 0; j < qk; ++j) {
             y[i*QK8_0 + j] = decoding_table[x[i].qs[j] + DECODING_OFFSET] * d; 
 
-            // fprintf(stdout, "PABLO: y[%d*%d + %d] = decoding_table[%d + %d] * %.2f = %d\n", i, QK8_0, j, x[i].qs[j], DECODING_OFFSET, d, y[i*QK8_0 + j]);
+            fprintf(stdout, "PABLO: y[%d*%d + %d] = decoding_table[%d + %d] * %.2f = %d\n", i, QK8_0, j, x[i].qs[j], DECODING_OFFSET, d, y[i*QK8_0 + j]);
         }
     }
 }
