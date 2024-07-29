@@ -3,10 +3,13 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
+// debug
+//#define _PABLO_PRINT_ALL
+#define _PABLO_DEBUG_OUT
+
 // Configuration file variables
 #define CONFIG_FILE "pablo.conf"
 bool do_pablo;
-enum _modes {SIMPLE_MODE, PABLO_MODE};
 
 // Histogram size
 #define NUM_TENSORS       291
@@ -17,25 +20,28 @@ unsigned pablo_histogram[NUM_TENSORS][NUM_ROWS][NUM_HIST] = {0};
 
 // translation tables
 #define ENCODING_OFFSET 128
-// int8_t encoding_table[256] = {
-//     -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, 
-//     -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7,
-//     -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6,
-//     -5, -5, -5, -5, -5, -5, -5, -5,
-//     -4, -4, -4, -4,
-//     -3, -3,
-//     -2,
-//     -1,
-//     0,
-//     1,
-//     2, 2, 
-//     3, 3, 3, 3, 
-//     4, 4, 4, 4, 4, 4, 4, 4, 
-//     5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 
-//     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 
-//     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 
-// };
-int8_t encoding_table[256] = {
+int8_t *encoding_table;
+
+int8_t basic_encoding_table[256] = {
+    -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, 
+    -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7, -7,
+    -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6, -6,
+    -5, -5, -5, -5, -5, -5, -5, -5,
+    -4, -4, -4, -4,
+    -3, -3,
+    -2,
+    -1,
+    0,
+    1,
+    2, 2, 
+    3, 3, 3, 3, 
+    4, 4, 4, 4, 4, 4, 4, 4, 
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 
+    6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 
+    7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 
+};
+
+int8_t balanced_encoding_table[256] = {
     -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, 
     -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, 
     -8, -8, -8, -8, -8, -8, -8, -8, -8, -8, -7, -7, -7, -7, -7, -7, 
@@ -54,30 +60,38 @@ int8_t encoding_table[256] = {
     7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7      
 };
 
+
 #define DECODING_OFFSET 8
-// int8_t decoding_table[16] = {
-//     -128,
-//     -64,
-//     -32,
-//     -16,
-//     -8,
-//     -4,
-//     -2,
-//     -1,
-//     0,
-//     1,
-//     2,
-//     4,
-//     8,
-//     16,
-//     32,
-//     64
-// };
-int8_t decoding_table[16] = {-127, -65, -50, -38, -28, -19, -10, -1, 0, 9, 18, 27, 37, 49, 64, 127};
+int8_t *decoding_table;
+
+int8_t basic_decoding_table[16] = {
+    -128,
+    -64,
+    -32,
+    -16,
+    -8,
+    -4,
+    -2,
+    -1,
+    0,
+    1,
+    2,
+    4,
+    8,
+    16,
+    32,
+    64
+};
+
+int8_t balanced_decoding_table[16] = {-127, -65, -50, -38, -28, -19, -10, -1, 0, 9, 18, 27, 37, 49, 64, 127};
 
 // pablo_q4_0 quantization radius
 uint8_t q4_0_radius = 0;
 
+// encoding-decoding table set to use
+enum _table_mode {BASIC_TABLE, BALANCED_TABLE};
+
+// Only execute initialization function once
 bool is_init = false;
 
 // global variables
@@ -105,25 +119,59 @@ void pablo_init(void) {
     // only execute this function once
     if (is_init) 
         return;
-    is_init = true;
 
+    printf("\nPABLO: Initializing data...\n");
+
+    // inspect the configuration file
     FILE *fp = fopen(CONFIG_FILE, "r");
     if (fp == NULL) {
-        fprintf(stderr, "\nERROR: no %s file found!\n", CONFIG_FILE);
+        fprintf(stderr, "ERROR: no %s file found!\n", CONFIG_FILE);
         exit(1);
     }
 
-    int num = 0;
-    fscanf(fp, "%d", &num);
-    
-    do_pablo = num == PABLO_MODE;
+    char mode[4] = {0};
+    int table;
 
-    if (do_pablo)
-        fprintf(stdout, "\nPABLO: performing PABLO (de)quantization...\n");
-    else
-        fprintf(stdout, "\nPABLO: performing SIMPLE (de)quantization...\n");
+    fread(mode, sizeof(char), 4, fp);
+    fscanf(fp, "%d %d", &q4_0_radius, &table);
 
     fclose(fp);
+
+    // Initialize the rest of the data
+    do_pablo = (strcmp(mode, "PBLO") == 0);
+
+    switch(table) {
+
+        case BASIC_TABLE :
+            encoding_table = basic_encoding_table;
+            decoding_table = basic_decoding_table;
+            break;
+
+        case BALANCED_TABLE :
+            encoding_table = balanced_encoding_table;
+            decoding_table = balanced_decoding_table;
+            break;
+    }
+
+    #ifdef _PABLO_DEBUG_OUT
+        if (do_pablo)
+            printf("PABLO:   performing PABLO (de)quantization\n");
+        else 
+            printf("PABLO:   performing SIMPLE (de)quantization\n");
+
+        printf("PABLO:   using radius %d\n", q4_0_radius);
+
+        switch(table) {
+            case BASIC_TABLE :
+                printf("PABLO:   using basic table set\n");
+                break;
+            case BALANCED_TABLE :
+                printf("PABLO:   using balanced table set\n");
+                break;
+        }
+    #endif // _PABLO_DEBUG_OUT
+
+    is_init = true;
 }
 
 void pablo_print_all(void) {    // json format
@@ -199,13 +247,19 @@ void pablo_print_all(void) {    // json format
 void pablo_quantize_row_q4_0_assign(const float * restrict x, block_q4_0 * restrict y, int k) {
     pablo_init();
 
-    simple_q4_0_quantize_row(x, y, k);
+    if (do_pablo) 
+        pablo_q4_0_quantize_row(x, y, k);
+    else
+        simple_q4_0_quantize_row(x, y, k);
 }
 
 void pablo_dequantize_row_q4_0_assign(const block_q4_0 * restrict x, float * restrict y, int k) {
     pablo_init();
 
-    simple_q4_0_dequantize_row(x, y, k);
+    if (do_pablo) 
+        pablo_q4_0_dequantize_row(x, y, k);
+    else
+        simple_q4_0_dequantize_row(x, y, k);
 }
 
 void pablo_quantize_row_q8_0_assign(const float * restrict x, block_q8_0 * restrict y, int k) {
