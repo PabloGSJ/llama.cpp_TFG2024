@@ -137,16 +137,15 @@ void pablo_init(void) {
         exit(1);
     }
 
-    char mode[4] = {0};
-    int table;
-
-    fread(mode, sizeof(char), 4, fp);
-    fscanf(fp, "%hhd %d", &q4_0_radius, &table);
+    int mode, table;
+    fscanf(fp, "%d %hhd %d", &mode, &q4_0_radius, &table);
 
     fclose(fp);
 
+    fprintf("PABLO: %d, %hhd %d\n", mode, q4_0_radius, table);
+
     // Initialize the rest of the data
-    do_pablo = (strcmp(mode, "PBLO") == 0);
+    do_pablo = (mode == 1);
 
     if (q4_0_radius < 0) 
         q4_0_radius = 0;

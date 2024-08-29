@@ -25,8 +25,8 @@ extern int pablo_rid;       // active row id
  * 
  * EXECUTION_MODE Q4_0_RADIUS TABLE_MODE
  * 
- * - EXECUTION_MODE: PBLO - use pablo (de)quantization function
- *                   SMPL - use the simple (de)quantization function
+ * - EXECUTION_MODE: 1 - use PABLO (de)quantization function
+ *                   0 - use the SIMPLE (de)quantization function
  * - Q4_0_RADIUS: Sets the value of the q4_0_radius variable. 
  *                This parameter is only used when executing Q4_0 in PBLO mode.
  * - TABLE_MODE: This parameter is only used when executing Q8_0 in PBLO mode.
