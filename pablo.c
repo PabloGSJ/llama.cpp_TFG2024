@@ -199,7 +199,7 @@ void pablo_print_all(void) {    // json format
         for (int t = 0; t < NUM_TENSORS-3; t++) {
             fprintf(stdout, "{\"hist\":[");
 
-            for (int h = 0; h < size_hist-1, h++) {
+            for (int h = 0; h < size_hist-1; h++) {
                 fprintf(stdout, "%u, ", num_hist[t*size_hist + h]);
             }
             fprintf(stdout, "%u", num_hist[t*size_hist + size_hist-1]);            // print the last hist without coma
@@ -208,10 +208,10 @@ void pablo_print_all(void) {    // json format
         }
         fprintf(stdout, "{\"hist\":[");                         // print the last tensor without coma
 
-        for (int h = 0; h < size_hist-1, h++) {
-            fprintf(stdout, "%u, ", num_hist[(NUM_TENSORS-3)t*size_hist + h]);
+        for (int h = 0; h < size_hist-1; h++) {
+            fprintf(stdout, "%u, ", num_hist[(NUM_TENSORS-3)*size_hist + h]);
         }
-        fprintf(stdout, "%u", num_hist[(NUM_TENSORS-3)t*size_hist + size_hist-1]);    // print the last hist without coma
+        fprintf(stdout, "%u", num_hist[(NUM_TENSORS-3)*size_hist + size_hist-1]);    // print the last hist without coma
 
         fprintf(stdout, "]}");
 
@@ -224,7 +224,7 @@ void pablo_print_all(void) {    // json format
         for (int g = 0; g < MAX_GRP-1; g++) {
             fprintf(stdout, "%u, ", grp_hist[g]);
         }
-        fprintf(stdout, "%u", grp_hist[g]);                             // print the last grp without coma
+        fprintf(stdout, "%u", grp_hist[MAX_GRP-1]);                             // print the last grp without coma
         
         fprintf(stdout, "]}");  // end of print grouping
 
