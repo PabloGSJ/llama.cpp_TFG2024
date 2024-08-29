@@ -384,8 +384,9 @@ void pablo_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, 
             y[i].qs[j]  = xi0;
             y[i].qs[j] |= xi1 << 4;
 
-            update_hists(xi0);
-            update_hists(xi1);
+            // apply offset for array adjustment
+            update_hists(xi0 + 8);
+            update_hists(xi1 + 8);
         }
     }
 }
@@ -472,7 +473,7 @@ void pablo_q8_0_quantize_row(const float * GGML_RESTRICT x, block_q8_0 * GGML_RE
             tmp = y[i].qs[j];
             y[i].qs[j] = encoding_table[tmp + ENCODING_OFFSET];
 
-            update_hists(encoding_table[tmp + ENCODING_OFFSET]);
+            update_hists(encoding_table[tmp + ENCODING_OFFSET] + 8);
         }
     }
 }
