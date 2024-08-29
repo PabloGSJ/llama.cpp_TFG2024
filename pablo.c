@@ -191,7 +191,7 @@ void pablo_init(void) {
 void pablo_print_all(void) {    // json format
     #ifdef _PABLO_PRINT_ALL
 
-        fprintf(stdout, "{\"pablo\":");
+        fprintf(stdout, "{\"pablo\":[");
 
         // print tensor histogram
         fprintf(stdout, "{\"tensors\":[");
@@ -228,7 +228,7 @@ void pablo_print_all(void) {    // json format
         
         fprintf(stdout, "]}");  // end of print grouping
 
-        fprintf(stdout, "}\n");
+        fprintf(stdout, "]}\n");
 
     #endif /* _PABLO_PRINT_ALL  */
 }
