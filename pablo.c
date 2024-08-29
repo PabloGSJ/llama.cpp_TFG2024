@@ -228,6 +228,8 @@ void pablo_print_all(void) {    // json format
         
         fprintf(stdout, "]}");  // end of print grouping
 
+        fprintf(stdout, "}\n");
+
     #endif /* _PABLO_PRINT_ALL  */
 }
 
