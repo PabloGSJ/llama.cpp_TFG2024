@@ -11,12 +11,17 @@
 #define CONFIG_FILE "pablo.conf"
 bool do_pablo;
 
-// Histogram size
-#define NUM_TENSORS       291
-#define NUM_ROWS          4096
-#define NUM_HIST          256
-// histogram declaration
-unsigned pablo_histogram[NUM_TENSORS][NUM_ROWS][NUM_HIST] = {0};
+// Histogram constants
+#define NUM_TENSORS 291
+#define MAX_GRP     16
+#define SEEKED_INT  0
+// histograms declaration
+unsigned *num_hist;
+int size_hist = 0;
+unsigned num_hist_q4_0[NUM_TENSORS][16]  = {0}; 
+unsigned num_hist_q8_0[NUM_TENSORS][256] = {0}; 
+unsigned grp_hist[MAX_GRP] = {0};
+unsigned grp_occurrences = 0;
 
 // translation tables
 #define ENCODING_OFFSET 128
@@ -99,6 +104,9 @@ int pablo_tid = 0;
 int pablo_rid = 0;
 
 
+// Histogram functions
+void update_hists(int value);
+
 // Q4_0 quantization-dequantization
 void simple_q4_0_quantize_row(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
 void pablo_q4_0_quantize_row(const float * GGML_RESTRICT x, block_q4_0 * GGML_RESTRICT y, int k);
@@ -144,7 +152,6 @@ void pablo_init(void) {
         q4_0_radius = 0;
 
     switch(table) {
-
         case BASIC_TABLE :
             encoding_table = basic_encoding_table;
             decoding_table = basic_decoding_table;
@@ -183,75 +190,69 @@ void pablo_init(void) {
 
 void pablo_print_all(void) {    // json format
     #ifdef _PABLO_PRINT_ALL
-            
-        FILE *pablo_file = fopen(PABLO_FILE_NAME, "w+");
 
-        fprintf(stdout, "{\"pablo\":{");
+        fprintf(stdout, "{\"pablo\":");
 
         // print tensor histogram
-        fprintf(stdout, "\"tensors\":[");
+        fprintf(stdout, "{\"tensors\":[");
 
-        for (int t = 0; t < NUM_TENSORS
-    -3; t++) {
-            fprintf(stderr, "PABLO: %d\n", t);
-            fprintf(stdout, "{\"tensor\":[");
+        for (int t = 0; t < NUM_TENSORS-3; t++) {
+            fprintf(stdout, "{\"hist\":[");
 
-            unsigned int sum[NUM_HIST] = {0};
-
-            // add all rows of the tensor
-            for (int r = 0; r < NUM_ROWS; r++)  {
-                for (int h = 0; h < NUM_HIST; h++) {
-
-                    sum[h] += pablo_histogram[t][r][h];
-                }
-            }
-
-            // print sumatories
-            for (int h = 0; h < NUM_HIST-1; h++) {
-
-                fprintf(stdout, "%u, ", sum[h]);
-            }
-            // last sumatory
-            fprintf(stdout, "%u", sum[NUM_HIST-1]);
+            for (int h = 0; h < size_hist-1, h++) 
+                fprintf(stdout, "%u, ", num_hist[t][h]);
+            fprintf(stdout, "%u", num_hist[t][size_hist-1]);            // print the last hist without coma
 
             fprintf(stdout, "]}, ");
         }
-        // last tensor
-        fprintf(stderr, "PABLO: %d\n", NUM_TENSORS
-    -3);
-        fprintf(stdout, "{\"tensor\":[");
+        fprintf(stdout, "{\"hist\":[");                         // print the last tensor without coma
 
-        unsigned int sum[NUM_HIST] = {0};
-
-        // add all rows of the tensor
-        for (int r = 0; r < NUM_ROWS; r++)  {
-            for (int h = 0; h < NUM_HIST; h++) {
-
-                sum[h] += pablo_histogram[NUM_TENSORS
-            -3][r][h];
-            }
-        }
-
-        // print sumatories
-        for (int h = 0; h < NUM_HIST-1; h++) {
-
-            fprintf(stdout, "%u, ", sum[h]);
-        }
-        // last sumatory
-        fprintf(stdout, "%u", sum[NUM_HIST-1]);
+        for (int h = 0; h < size_hist-1, h++) 
+            fprintf(stdout, "%u, ", num_hist[NUM_TENSORS-3][h]);
+        fprintf(stdout, "%u", num_hist[NUM_TENSORS-3][size_hist-1]);    // print the last hist without coma
 
         fprintf(stdout, "]}");
 
-        fprintf(stdout, "]");
-        fprintf(stdout, "}}\n\n");
+        fprintf(stdout, "]}");    // end of print tensors
 
-        fclose(pablo_file);
+        
+        // print grouping histogram
+        fprintf(stdout, ", {\"groups\":[");
+
+        for (int g = 0; g < MAX_GRP-1; g++) 
+            fprintf(stdout, "%u, ", grp_hist[g]);
+        fprintf(stdout, "%u", grp_hist[g]);                             // print the last grp without coma
+        
+        fprintf(stdout, "]}");  // end of print grouping
 
     #endif /* _PABLO_PRINT_ALL  */
 }
 
+void update_hists(int value) {
+    // update num_hist
+    num_hist[pablo_tid][value]++;
+
+    // update grp_hist
+    if (value == SEEKED_INT) {
+        // keep adding occurences
+        grp_occurrences++;
+    }
+    else if(grp_occurrences > 0) {
+        // there are stored occurences AND just found unmatching number
+        // this means it's the end of a streak
+        grp_hist[grp_occurrences - 1]++;
+    }
+
+    // grp_occurrences is capped at MAX_GRP to avoid overflow
+    grp_occurrences = MIN(grp_occurrences, MAX_GRP);
+}
+
+
 // Assign functions 
 void pablo_quantize_row_q4_0_assign(const float * restrict x, block_q4_0 * restrict y, int k) {
+    if (!is_init)
+        num_hist = num_hist_q4_0;
+        size_hist = 16;
     pablo_init();
 
     if (do_pablo) 
@@ -270,6 +271,9 @@ void pablo_dequantize_row_q4_0_assign(const block_q4_0 * restrict x, float * res
 }
 
 void pablo_quantize_row_q8_0_assign(const float * restrict x, block_q8_0 * restrict y, int k) {
+    if (!is_init)
+        num_hist = num_hist_q8_0;
+        size_hist = 256;
     pablo_init();
 
     if (do_pablo) 
@@ -326,6 +330,9 @@ void simple_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y,
 
             y[i].qs[j]  = xi0;
             y[i].qs[j] |= xi1 << 4;
+
+            update_hists(xi0);
+            update_hists(xi1);
         }
     }
 }
@@ -372,6 +379,9 @@ void pablo_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, 
 
             y[i].qs[j]  = xi0;
             y[i].qs[j] |= xi1 << 4;
+
+            update_hists(xi0);
+            update_hists(xi1);
         }
     }
 }
@@ -437,6 +447,8 @@ void simple_q8_0_quantize_row(const float * restrict x, block_q8_0 * restrict y,
             const float x0 = x[i*QK8_0 + j]*id;
 
             y[i].qs[j] = roundf(x0);
+
+            update_hists(round(x0));
         }
     }
 }
@@ -456,8 +468,7 @@ void pablo_q8_0_quantize_row(const float * GGML_RESTRICT x, block_q8_0 * GGML_RE
             tmp = y[i].qs[j];
             y[i].qs[j] = encoding_table[tmp + ENCODING_OFFSET];
 
-            // fprintf(stdout, "PABLO: y[%d].qs[%d] = encoding_table[%d + %d] = %d\n", i, j, tmp, ENCODING_OFFSET, y[i].qs[j]);
-
+            update_hists(encoding_table[tmp + ENCODING_OFFSET]);
         }
     }
 }
