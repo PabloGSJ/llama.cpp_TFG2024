@@ -18,8 +18,8 @@ bool do_pablo;
 // histograms declaration
 unsigned *num_hist;
 int size_hist = 0;
-unsigned num_hist_q4_0[NUM_TENSORS][16]  = {0}; 
-unsigned num_hist_q8_0[NUM_TENSORS][256] = {0}; 
+unsigned num_hist_q4_0[NUM_TENSORS * 16]  = {0}; 
+unsigned num_hist_q8_0[NUM_TENSORS * 256] = {0}; 
 unsigned grp_hist[MAX_GRP] = {0};
 unsigned grp_occurrences = 0;
 
@@ -199,17 +199,19 @@ void pablo_print_all(void) {    // json format
         for (int t = 0; t < NUM_TENSORS-3; t++) {
             fprintf(stdout, "{\"hist\":[");
 
-            for (int h = 0; h < size_hist-1, h++) 
-                fprintf(stdout, "%u, ", num_hist[t][h]);
-            fprintf(stdout, "%u", num_hist[t][size_hist-1]);            // print the last hist without coma
+            for (int h = 0; h < size_hist-1, h++) {
+                fprintf(stdout, "%u, ", num_hist[t*size_hist + h]);
+            }
+            fprintf(stdout, "%u", num_hist[t*size_hist + size_hist-1]);            // print the last hist without coma
 
             fprintf(stdout, "]}, ");
         }
         fprintf(stdout, "{\"hist\":[");                         // print the last tensor without coma
 
-        for (int h = 0; h < size_hist-1, h++) 
-            fprintf(stdout, "%u, ", num_hist[NUM_TENSORS-3][h]);
-        fprintf(stdout, "%u", num_hist[NUM_TENSORS-3][size_hist-1]);    // print the last hist without coma
+        for (int h = 0; h < size_hist-1, h++) {
+            fprintf(stdout, "%u, ", num_hist[(NUM_TENSORS-3)t*size_hist + h]);
+        }
+        fprintf(stdout, "%u", num_hist[(NUM_TENSORS-3)t*size_hist + size_hist-1]);    // print the last hist without coma
 
         fprintf(stdout, "]}");
 
@@ -219,8 +221,9 @@ void pablo_print_all(void) {    // json format
         // print grouping histogram
         fprintf(stdout, ", {\"groups\":[");
 
-        for (int g = 0; g < MAX_GRP-1; g++) 
+        for (int g = 0; g < MAX_GRP-1; g++) {
             fprintf(stdout, "%u, ", grp_hist[g]);
+        }
         fprintf(stdout, "%u", grp_hist[g]);                             // print the last grp without coma
         
         fprintf(stdout, "]}");  // end of print grouping
@@ -230,7 +233,7 @@ void pablo_print_all(void) {    // json format
 
 void update_hists(int value) {
     // update num_hist
-    num_hist[pablo_tid][value]++;
+    num_hist[pablo_tid*size_hist + value]++;
 
     // update grp_hist
     if (value == SEEKED_INT) {
