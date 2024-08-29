@@ -142,7 +142,7 @@ void pablo_init(void) {
 
     fclose(fp);
 
-    fprintf("PABLO: %d, %hhd %d\n", mode, q4_0_radius, table);
+    printf("PABLO: %d, %hhd %d\n", mode, q4_0_radius, table);
 
     // Initialize the rest of the data
     do_pablo = (mode == 1);
