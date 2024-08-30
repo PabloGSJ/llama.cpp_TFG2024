@@ -275,10 +275,8 @@ void pablo_dequantize_row_q4_0_assign(const block_q4_0 * restrict x, float * res
 
 void pablo_quantize_row_q8_0_assign(const float * restrict x, block_q8_0 * restrict y, int k) {
     if (!is_init) {
-        // num_hist = num_hist_q8_0;
-        // size_hist = 256;
-        num_hist = num_hist_q4_0;
-        size_hist = 16;
+        num_hist = num_hist_q8_0;
+        size_hist = 256;
     }
     pablo_init();
 
