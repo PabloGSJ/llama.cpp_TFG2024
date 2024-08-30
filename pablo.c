@@ -18,6 +18,7 @@ bool do_pablo;
 // histograms declaration
 unsigned *num_hist;
 int size_hist = 0;
+int hist_offset = 0;
 unsigned num_hist_q4_0[NUM_TENSORS * 16]  = {0}; 
 unsigned num_hist_q8_0[NUM_TENSORS * 256] = {0}; 
 unsigned grp_hist[MAX_GRP] = {0};
@@ -232,7 +233,8 @@ void pablo_print_all(void) {    // json format
 
 void update_hists(int value) {
     // update num_hist
-    num_hist[pablo_tid*size_hist + value]++;
+    // apply offset to account for array index
+    num_hist[pablo_tid*size_hist + value + hist_offset]++;
 
     // update grp_hist
     if (value == SEEKED_INT) {
@@ -302,10 +304,10 @@ void pablo_dequantize_row_q8_0_assign(const block_q8_0 * restrict x, float * res
 
 // Quantization - Dequantization functions
 void simple_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, int k) {
+    hist_offset = 0;
+
     static const int qk = QK4_0;
-
     assert(k % qk == 0);
-
     const int nb = k / qk;
 
     for (int i = 0; i < nb; i++) {  
@@ -344,6 +346,7 @@ void simple_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y,
 }
 
 void pablo_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, int k) {
+    hist_offset = 8;
 
     static const int qk = QK4_0;
     assert(k % qk == 0);
@@ -386,9 +389,8 @@ void pablo_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, 
             y[i].qs[j]  = xi0;
             y[i].qs[j] |= xi1 << 4;
 
-            // apply offset to account for array index
-            update_hists(xi0 + 8);
-            update_hists(xi1 + 8);
+            update_hists(xi0);
+            update_hists(xi1);
         }
     }
 }
@@ -434,6 +436,8 @@ void pablo_q4_0_dequantize_row(const block_q4_0 * restrict x, float * restrict y
 }
 
 void simple_q8_0_quantize_row(const float * restrict x, block_q8_0 * restrict y, int k) {
+    hist_offset = 128;
+    
     assert(k % QK8_0 == 0);
     const int nb = k / QK8_0;
 
@@ -455,8 +459,7 @@ void simple_q8_0_quantize_row(const float * restrict x, block_q8_0 * restrict y,
 
             y[i].qs[j] = roundf(x0);
 
-            // apply offset to account for array index
-            // update_hists(round(x0) + 127);
+            // update_hists(round(x0));
         }
     }
 }
@@ -465,6 +468,7 @@ void pablo_q8_0_quantize_row(const float * GGML_RESTRICT x, block_q8_0 * GGML_RE
 
     // fully quantize to q8_0
     simple_q8_0_quantize_row(x, y, k);
+    hist_offset = 8;
 
     // translate to 16 bit values
     assert(k % QK8_0 == 0);
@@ -476,8 +480,7 @@ void pablo_q8_0_quantize_row(const float * GGML_RESTRICT x, block_q8_0 * GGML_RE
             tmp = y[i].qs[j];
             y[i].qs[j] = encoding_table[tmp + ENCODING_OFFSET];
 
-            // apply offset to account for array index
-            update_hists(encoding_table[tmp + ENCODING_OFFSET] + 8);
+            update_hists(encoding_table[tmp + ENCODING_OFFSET]);
         }
     }
 }
