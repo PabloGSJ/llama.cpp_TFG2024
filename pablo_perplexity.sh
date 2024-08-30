@@ -1,46 +1,50 @@
 #!/bin/bash
 
-# for i in 1 2 3 4 5 ; do
-#     # Measure perplexity
-#     ./perplexity -m $MODELF -f wikitext-2-raw/wiki.test.raw > pablo_tmpfile 2> pablo_tmpfile
- 
-#     # Get and print final perplexity
-#     echo pablo_tmpfile | head -n 4 | cut -c 10-
-
-# done 
-
 MODELF=models/llama-2-7b
 BASE_MODEL=ggml-model-f16.gguf
 TEST_FILE=wikitext-2-raw/wiki.test.raw
 CONF_FILE=pablo.conf
 
+rm -r $HOME/perplexity
+mkdir $HOME/perplexity
+
 make -j 16
 
 # Simple q4_0
-out_file=simple_q4_0
-echo 0 > $CONF_FILE
+out_file=simple-q4_0
+echo 0 0 0 > $CONF_FILE
 
 ./quantize $MODELF/$BASE_MODEL $MODELF/$out_file.gguf Q4_0 1
-for i in 0 1 2 3 4 ; do
-    echo "Measuring $out_file-$i..."
-    ./perplexity -m $MODELF/$out_file.gguf -f $TEST_FILE > pablo_results/$out_file-$i.stdout 2> pablo_results/$out_file-$i.stderr
-done 
+./perplexity -m $MODELF/$out_file.gguf -f $TEST_FILE > $HOME/perplexity/$out_file.stdout 2> $HOME/perplexity/$out_file.stderr
 
 # Simple q8_0
-out_file=simple_q8_0
-echo 0 > $CONF_FILE
+out_file=simple-q8_0
+echo 0 0 0 > $CONF_FILE
 
 ./quantize $MODELF/$BASE_MODEL $MODELF/$out_file.gguf Q8_0 1
-for i in 0 1 2 3 4 ; do
-    echo "Measuring $out_file-$i..."
-    ./perplexity -m $MODELF/$out_file.gguf -f $TEST_FILE > pablo_results/$out_file-$i.stdout 2> pablo_results/$out_file-$i.stderr
-done 
-# Pablo q8_0
-out_file=pablo_q8_0
-echo 1 > $CONF_FILE
+./perplexity -m $MODELF/$out_file.gguf -f $TEST_FILE > $HOME/perplexity/$out_file.stdout 2> $HOME/perplexity/$out_file.stderr
+
+# Pablo q8_0 basic_table
+out_file=pablo-q8_0-basict
+echo 1 0 0 > $CONF_FILE
 
 ./quantize $MODELF/$BASE_MODEL $MODELF/$out_file.gguf Q8_0 1
-for i in 0 1 2 3 4 ; do
-    echo "Measuring $out_file-$i..."
-    ./perplexity -m $MODELF/$out_file.gguf -f $TEST_FILE > pablo_results/$out_file-$i.stdout 2> pablo_results/$out_file-$i.stderr
-done 
+./perplexity -m $MODELF/$out_file.gguf -f $TEST_FILE > $HOME/perplexity/$out_file.stdout 2> $HOME/perplexity/$out_file.stderr
+
+# Pablo q8_0 balanced_table
+out_file=pablo-q8_0-balancedt
+echo 1 0 1 > $CONF_FILE
+
+./quantize $MODELF/$BASE_MODEL $MODELF/$out_file.gguf Q8_0 1
+./perplexity -m $MODELF/$out_file.gguf -f $TEST_FILE > $HOME/perplexity/$out_file.stdout 2> $HOME/perplexity/$out_file.stderr
+
+# pablo q4_0, radius=[0, 1, 2, 3]
+for i in 0 1 2 3 ; do
+
+out_file=pablo-q4_0-r$i
+echo 1 $i 0 > $CONF_FILE
+
+./quantize $MODELF/$BASE_MODEL $MODELF/$out_file.gguf Q4_0 1
+./perplexity -m $MODELF/$out_file.gguf -f $TEST_FILE > $HOME/perplexity/$out_file.stdout 2> $HOME/perplexity/$out_file.stderr
+
+done

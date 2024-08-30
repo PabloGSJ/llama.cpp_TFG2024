@@ -237,6 +237,7 @@ void update_hists(int value) {
     num_hist[pablo_tid*size_hist + value + hist_offset]++;
 
     // update grp_hist
+    printf("%d\n", value);
     if (value == SEEKED_INT) {
         // keep adding occurences
         grp_occurrences++;
@@ -389,6 +390,7 @@ void pablo_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, 
             y[i].qs[j]  = xi0;
             y[i].qs[j] |= xi1 << 4;
 
+            printf("%hhd, ", xi0);
             update_hists(xi0);
             update_hists(xi1);
         }
