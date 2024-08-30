@@ -384,7 +384,7 @@ void pablo_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, 
             y[i].qs[j]  = xi0;
             y[i].qs[j] |= xi1 << 4;
 
-            // apply offset accounting for array index
+            // apply offset to account for array index
             update_hists(xi0 + 8);
             update_hists(xi1 + 8);
         }
@@ -453,7 +453,8 @@ void simple_q8_0_quantize_row(const float * restrict x, block_q8_0 * restrict y,
 
             y[i].qs[j] = roundf(x0);
 
-            update_hists(round(x0));
+            // apply offset to account for array index
+            update_hists(round(x0) + 128);
         }
     }
 }
