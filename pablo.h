@@ -13,7 +13,6 @@
 #include <stdlib.h> // for qsort
 #include <stdio.h>  // for GGML_ASSERT
 
-#define _PABLO_PRINT_ALL
 
 extern int pablo_tid;       // active tensor id
 extern int pablo_rid;       // active row id

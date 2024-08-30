@@ -4,7 +4,7 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 // debug
-//#define _PABLO_PRINT_ALL
+#define _PABLO_MAKE_HISTS
 #define _PABLO_DEBUG_OUT
 
 // Configuration file variables
@@ -187,7 +187,7 @@ void pablo_init(void) {
 }
 
 void pablo_print_all(void) {    // json format
-    #ifdef _PABLO_PRINT_ALL
+    #ifdef _PABLO_MAKE_HISTS
 
         fprintf(stdout, "{\"pablo\":[");
 
@@ -228,10 +228,12 @@ void pablo_print_all(void) {    // json format
 
         fprintf(stdout, "]}\n");
 
-    #endif /* _PABLO_PRINT_ALL  */
+    #endif /* _PABLO_MAKE_HISTS  */
 }
 
 void update_hists(int value) {
+    #ifdef _PABLO_MAKE_HISTS
+
     // update num_hist
     // apply offset to account for array index
     num_hist[pablo_tid*size_hist + value + hist_offset]++;
@@ -250,6 +252,8 @@ void update_hists(int value) {
 
     // grp_occurrences is capped at MAX_GRP to avoid overflow
     grp_occurrences = MIN(grp_occurrences, MAX_GRP);
+
+    #endif /* _PABLO_MAKE_HISTS */
 }
 
 
@@ -278,10 +282,10 @@ void pablo_dequantize_row_q4_0_assign(const block_q4_0 * restrict x, float * res
 
 void pablo_quantize_row_q8_0_assign(const float * restrict x, block_q8_0 * restrict y, int k) {
     if (!is_init) {
-        // num_hist = num_hist_q8_0;
-        // size_hist = 256;
-        num_hist = num_hist_q4_0;
-        size_hist = 16;
+        num_hist = num_hist_q8_0;
+        size_hist = 256;
+        // num_hist = num_hist_q4_0;
+        // size_hist = 16;
     }
     pablo_init();
 
