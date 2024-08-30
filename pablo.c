@@ -374,7 +374,7 @@ void pablo_q4_0_quantize_row(const float * restrict x, block_q4_0 * restrict y, 
             int8_t xi1 = MIN(15, (int8_t)(x1 + 8.5f)) - 8;
 
             // if quantized value is in rage, zero it
-            if (xi0 <= 0 + q4_0_radius && xi0 => 0 - q4_0_radius) 
+            if (xi0 <= 0 + q4_0_radius && xi0 >= 0 - q4_0_radius) 
                 xi0 = 0;
 
             if (xi1 <= 0 + q4_0_radius && xi1 >= 0 - q4_0_radius) 
