@@ -454,7 +454,7 @@ void simple_q8_0_quantize_row(const float * restrict x, block_q8_0 * restrict y,
             y[i].qs[j] = roundf(x0);
 
             // apply offset to account for array index
-            update_hists(round(x0) + 128);
+            update_hists(round(x0) + 127);
         }
     }
 }
