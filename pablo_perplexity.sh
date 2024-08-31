@@ -5,9 +5,6 @@ BASE_MODEL=ggml-model-f16.gguf
 TEST_FILE=wikitext-2-raw/wiki.test.raw
 CONF_FILE=pablo.conf
 
-rm -r $HOME/perplexity
-mkdir $HOME/perplexity
-
 make -j 16
 
 # Simple q4_0
