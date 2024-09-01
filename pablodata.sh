@@ -1,8 +1,6 @@
 #!/bin/bash
 
 make -j 16
-rm -r $HOME/json
-mkdir $HOME/json
 
 # simple_q4_0
 echo 0 0 0 > pablo.conf 
