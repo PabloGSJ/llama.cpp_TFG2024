@@ -503,7 +503,7 @@ void simple_q8_0_dequantize_row(const block_q8_0 * restrict x, float * restrict 
         for (int j = 0; j < qk; ++j) {
             y[i*qk + j] = x[i].qs[j]*d;
 
-            fprintf(stdout, "PABLO: %d * %f = %f\n", x[i].qs[j], d, y[i*qk + j]);
+            // fprintf(stdout, "PABLO: %d * %f = %f\n", x[i].qs[j], d, y[i*qk + j]);
         }
     }
 }
