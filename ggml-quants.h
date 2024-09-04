@@ -10,7 +10,7 @@
 #define QK4_0 32
 typedef struct {
     ggml_fp16_t d;          // delta
-    uint8_t qs[QK4_0 / 2];  // nibbles / quants
+    int8_t qs[QK4_0 / 2];  // nibbles / quants
 } block_q4_0;
 static_assert(sizeof(block_q4_0) == sizeof(ggml_fp16_t) + QK4_0 / 2, "wrong q4_0 block size/padding");
 
