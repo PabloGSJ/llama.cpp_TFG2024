@@ -1,3 +1,9 @@
+# Información sobre los ficheros modificados.
+
+Para implementar las mejoras en los mecanismos de cuantización se han realizado modificaciones al código original en diferentes puntos de las librerías de GGML y llama.cpp. Se ha creado una librería propia dividida en los ficheros _pablo.h_ y _pablo.c_ que contiene las implementaciones de las cuantizaciones propias, así como la lógica para realizar la toma de medidas y guardar los resultados. Para hacerlo funcionar, también ha sido necesario crear nuevas llamadas en el código original, así que, con el objetivo de facilitar su identificación, se ha reservado el prefijo "PABLO" para nombrarlos.
+
+Se incluyen también los _scripts_ _pablo_perplexity.sh_ y _pablodata.sh_, que han sido utilizados para automatizar la toma de medidas del _perplexity_ y los histogramas, respectivamente.
+
 # llama.cpp
 
 ![llama](https://user-images.githubusercontent.com/1991296/230134379-7181e485-c521-4d23-a0d6-f7b3b61ba524.png)
