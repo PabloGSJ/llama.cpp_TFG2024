@@ -3,6 +3,7 @@
 
 #include "ggml-impl.h"
 #include "ggml-quants.h"
+#include "pablo.h"  // PABLO
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #include <malloc.h> // using malloc.h with MSC/MINGW
@@ -19781,6 +19782,11 @@ void ggml_quantize_free(void) {
     ggml_critical_section_end();
 }
 
+// PABLO:
+void pablo_print_all_ggml() {
+    pablo_print_all();
+}
+
 size_t ggml_quantize_q4_0(const float * src, void * dst, int n, int k, int64_t * hist) {
     assert(k % QK4_0 == 0);
     const int nb = k / QK4_0;
@@ -19788,6 +19794,9 @@ size_t ggml_quantize_q4_0(const float * src, void * dst, int n, int k, int64_t *
     for (int b = 0; b < n; b += k) {
         block_q4_0 * restrict y = (block_q4_0 *) dst + b/QK4_0;
 
+        // PABLO: get the current row id
+        pablo_rid = (b / k) - 1;
+        
         quantize_row_q4_0_reference(src + b, y, k);
 
         for (int i = 0; i < nb; i++) {

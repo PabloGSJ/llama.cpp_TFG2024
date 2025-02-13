@@ -538,113 +538,7 @@ static const uint64_t table_b2b_1[1 << 8] = { B8(10, 00) }; // (!b) << 4
 
 // reference implementation for deterministic creation of model files
 void quantize_row_q4_0_reference(const float * restrict x, block_q4_0 * restrict y, int k) {
-    
-    // PABLO:
-    // Clock counters
-    clock_t c_total = 0;
-    clock_t c_block = 0;
-    clock_t c_max = 0;
-    clock_t c_j2 = 0;
-
-    #ifdef _MTOTAL 
-        c_total -= clock(); // ini
-    #endif /*_MTOTAL*/
-    
-    // inicio normal de la funcion
-    static const int qk = QK4_0;    // constante de cuantizacion para enteros de 4 bits
-
-    assert(k % qk == 0);            // Comprueba que el numero de elementos de x es divisible entre qk para la siguiente operacion
-
-    const int nb = k / qk;          // divide x en nb bloques de qk elementos
-
-    // BUCLE i:
-    for (int i = 0; i < nb; i++) {  
-        
-        #ifdef _MBLOCK
-            c_block -= clock(); // ini
-        #endif /*_MBLOCK*/
-
-        float amax = 0.0f; // absolute max
-        float max  = 0.0f;
-
-        // BUCLE j 1:
-        for (int j = 0; j < qk; j++) {      // Busca el máximo de la fila (alfa?)
-            
-            #ifdef _MMAX
-                c_max -= clock(); // ini
-            #endif /*_MMAX*/
-
-            const float v = x[i*qk + j];
-            if (amax < fabsf(v)) {
-                amax = fabsf(v);
-                max  = v;
-            }
-
-            #ifdef _MMAX
-                c_max += clock(); // fin
-            #endif /*_MMAX*/
-        }
-
-        const float d  = max / -8;
-        const float id = d ? 1.0f/d : 0.0f;
-
-        y[i].d = GGML_FP32_TO_FP16(d);
-
-        // BUCLE j 2:
-        for (int j = 0; j < qk/2; ++j) {
-            #ifdef _MJ2
-                c_j2 -= clock(); // ini
-            #endif /*_MJ2*/
-
-            const float x0 = x[i*qk + 0    + j]*id;
-            const float x1 = x[i*qk + qk/2 + j]*id;
-
-            const uint8_t xi0 = MIN(15, (int8_t)(x0 + 8.5f));
-            const uint8_t xi1 = MIN(15, (int8_t)(x1 + 8.5f));
-
-            y[i].qs[j]  = xi0;
-            y[i].qs[j] |= xi1 << 4;
-
-            #ifdef _MJ2
-                c_j2 += clock(); // fin
-            #endif /*_MJ2*/
-        }
-
-        #ifdef _MBLOCK
-            c_block += clock(); // fin
-        #endif /*_MBLOCK*/
-
-    }
-
-    // final normal de la funcion
-
-    #ifdef _MTOTAL
-        c_total += clock(); // fin
-    #endif /*_MTOTAL*/
-
-
-    // CALCULAR TIEMPOS -----------------------------------------------------------------------
-    quant_times qt;
-
-    // TIEMPO total
-    qt.total_time = (double)c_total;
-    qt.total_time /= CLOCKS_PER_SEC;
-
-    // TIEMPO por bloque
-    qt.per_block_time = (double)c_block / nb;
-    qt.per_block_time /= CLOCKS_PER_SEC;
-
-    // TIEMPO para encontrar un maximo
-    qt.max_search_time = (double)c_max / (qk * nb);
-    qt.max_search_time /= CLOCKS_PER_SEC;
-
-    // TIEMPO para J2
-    qt.j2_iter_time = (double)c_j2 / ((qk / 2) * nb);
-    qt.j2_iter_time /= CLOCKS_PER_SEC;
-
-    print_quant_times(qt);
-    // ---------------------------------------------------------------------------------------
-    
+    pablo_quantize_row_q4_0_assign(x, y, k);
 }
 
 void quantize_row_q4_0(const float * restrict x, void * restrict y, int k) {
@@ -791,28 +685,7 @@ void quantize_row_q5_1(const float * restrict x, void * restrict y, int k) {
 
 // reference implementation for deterministic creation of model files
 void quantize_row_q8_0_reference(const float * restrict x, block_q8_0 * restrict y, int k) {
-    assert(k % QK8_0 == 0);
-    const int nb = k / QK8_0;
-
-    for (int i = 0; i < nb; i++) {
-        float amax = 0.0f; // absolute max
-
-        for (int j = 0; j < QK8_0; j++) {
-            const float v = x[i*QK8_0 + j];
-            amax = MAX(amax, fabsf(v));
-        }
-
-        const float d = amax / ((1 << 7) - 1);
-        const float id = d ? 1.0f/d : 0.0f;
-
-        y[i].d = GGML_FP32_TO_FP16(d);
-
-        for (int j = 0; j < QK8_0; ++j) {
-            const float x0 = x[i*QK8_0 + j]*id;
-
-            y[i].qs[j] = roundf(x0);
-        }
-    }
+    pablo_quantize_row_q8_0_assign(x, y, k);
 }
 
 void quantize_row_q8_0(const float * restrict x, void * restrict vy, int k) {
@@ -1258,23 +1131,7 @@ void quantize_row_q8_1(const float * restrict x, void * restrict vy, int k) {
 }
 
 void dequantize_row_q4_0(const block_q4_0 * restrict x, float * restrict y, int k) {
-    static const int qk = QK4_0;
-
-    assert(k % qk == 0);
-
-    const int nb = k / qk;
-
-    for (int i = 0; i < nb; i++) {
-        const float d = GGML_FP16_TO_FP32(x[i].d);
-
-        for (int j = 0; j < qk/2; ++j) {
-            const int x0 = (x[i].qs[j] & 0x0F) - 8;
-            const int x1 = (x[i].qs[j] >>   4) - 8;
-
-            y[i*qk + j + 0   ] = x0*d;
-            y[i*qk + j + qk/2] = x1*d;
-        }
-    }
+    pablo_dequantize_row_q4_0_assign(x, y, k);
 }
 
 void dequantize_row_q4_1(const block_q4_1 * restrict x, float * restrict y, int k) {
@@ -1352,19 +1209,7 @@ void dequantize_row_q5_1(const block_q5_1 * restrict x, float * restrict y, int 
 }
 
 void dequantize_row_q8_0(const block_q8_0 * restrict x, float * restrict y, int k) {
-    static const int qk = QK8_0;
-
-    assert(k % qk == 0);
-
-    const int nb = k / qk;
-
-    for (int i = 0; i < nb; i++) {
-        const float d = GGML_FP16_TO_FP32(x[i].d);
-
-        for (int j = 0; j < qk; ++j) {
-            y[i*qk + j] = x[i].qs[j]*d;
-        }
-    }
+    pablo_dequantize_row_q8_0_assign(x, y, k);
 }
 
 //
